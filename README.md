@@ -6,10 +6,10 @@
 
 
 	🟡 MAP
-		🟡 Wall collision
 		🔴 Door system
 		🟢 Floor load and draw
 		🟢 Wall load and draw
+		🟢 Wall collision
 	🔴 Menu or HUB
 	🔴 UI
 	🔴 Player Logic
