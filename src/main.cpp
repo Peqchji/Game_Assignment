@@ -36,6 +36,9 @@ int main()
     sf::View view;
     sf::Event ev;
 
+    // mouse position
+    sf::Vector2f mousePosi;
+
     //Clock
     float dt;
     sf::Clock dt_clock;

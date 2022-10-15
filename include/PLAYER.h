@@ -1,6 +1,11 @@
 #include "MASTER.h"
 class PLAYER{
     public:
+        short Health;
+        short Ammor;
+        short Energy;
+        short Crit_Chance;
+
         sf::Texture PlayerTexture;
         sf::Vector2f velocity;
 
