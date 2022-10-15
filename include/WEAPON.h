@@ -5,4 +5,9 @@ class WEAPON
         int Damage;
         int FireRate;
         int EnergyCost;
+
+        WEAPON();
+        void setWeaponStat();
+    private:
+        std::map<std::string, int> GunType;
 };

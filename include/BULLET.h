@@ -8,7 +8,7 @@ class BULLET
         sf::Vector2f Direction;
         float BulletSpeed;
     public:
-        BULLET(sf::Texture &Texture, float dir_x, float dir_y, float Speed);
+        BULLET(float dir_x, float dir_y, float Speed);
         virtual ~BULLET();
 
         void update();

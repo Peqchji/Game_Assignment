@@ -37,7 +37,9 @@ int main()
     sf::Event ev;
 
     // mouse position
-    sf::Vector2f mousePosi;
+    sf::Mouse mouse;
+    sf::Vector2i mousePosi;
+    mouse.setPosition(sf::Vector2i(ScreenWidth/2.f, ScreenHeight/2.f));
 
     //Clock
     float dt;
@@ -65,6 +67,8 @@ int main()
     //##GAME LOOP##
     while (window.isOpen())
     {
+        mousePosi = mouse.getPosition();
+
         playerPosi = {player.Hitbox.getPosition().x, player.Hitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
 

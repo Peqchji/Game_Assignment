@@ -40,3 +40,14 @@ void PLAYER::setZeroVelocity()
    this->velocity.x = 0;
    this->velocity.y = 0;
  }
+
+//private//
+void PLAYER::setPlayerClass()
+{
+  PlayerClass = 
+  {
+    {"Knight", PlayerClassAttibute(6, 5, 180, 5, "Dual Wielding")},
+    {"Priest", PlayerClassAttibute(12, 3, 200, 1, "Heal")},
+    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, "FatalShot")}
+  };
+}

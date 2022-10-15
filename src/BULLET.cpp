@@ -1,8 +1,8 @@
 #include "BULLET.h"
 
-BULLET::BULLET(sf::Texture &Texture, float dir_x, float dir_y, float Speed)
+BULLET::BULLET(float dir_x, float dir_y, float Speed)
 {
-    this->bulletShape.setTexture(Texture);
+    this->bulletShape.setTexture(*bulletTexture);
     this->Direction.x = dir_x;
     this->Direction.y = dir_y;
 }
