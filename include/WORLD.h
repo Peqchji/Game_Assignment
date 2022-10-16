@@ -55,6 +55,6 @@ class WORLD
 		void TileMAPClear();
 		void WallClear();
 
-		std::vector<std::string> RoomType;
-		void RandomRoomType(short AMOUNT_Room = 5);
+		//std::vector<std::string> RoomType;
+		void RandomRoomType(short AMOUNT_Room_RNDType);
 };

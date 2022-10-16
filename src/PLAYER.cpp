@@ -2,16 +2,16 @@
 void PLAYER::setPlayer_attribute()
 {
    //Assign Hitbox size
-   this->Hitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize - 6)/2) );
+   this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize - 6)/2) );
    this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
 
    this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
-   this->Hitbox.setOrigin(sf::Vector2f((::CellPixelSize - 6)/2.f, (::CellPixelSize - 6)/4.f));
+   this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 6)/2.f, (::CellPixelSize - 6)/4.f));
 
    // Virsual the Hitbox
-   this->Hitbox.setFillColor(sf::Color::White);
-   this->Hitbox.setOutlineColor(sf::Color::Red);
-   this->Hitbox.setOutlineThickness(1.f);
+   this->collisionHitbox.setFillColor(sf::Color::Transparent);
+   this->collisionHitbox.setOutlineColor(sf::Color::Red);
+   this->collisionHitbox.setOutlineThickness(1.f);
 
   this->CharModel.setFillColor(sf::Color::White);
    //Load Texture
@@ -25,13 +25,13 @@ void PLAYER::setPlayer_attribute()
 
 void PLAYER::setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y)
 {
-   this->Hitbox.setPosition(SpawnPoint_x, SpawnPoint_y);
-   this->CharModel.setPosition(SpawnPoint_x, SpawnPoint_y - 7);
+   this->collisionHitbox.setPosition(SpawnPoint_x, SpawnPoint_y);
+   this->CharModel.setPosition(SpawnPoint_x, SpawnPoint_y - 8);
 }
 
 void PLAYER::movePlayer()
  {
-   this->Hitbox.move(this->velocity.x, this->velocity.y);
+   this->collisionHitbox.move(this->velocity.x, this->velocity.y);
    this->CharModel.move(this->velocity.x, this->velocity.y);
  }
 

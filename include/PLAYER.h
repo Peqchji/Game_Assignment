@@ -22,7 +22,7 @@ class PLAYER{
         sf::Texture PlayerTexture;
         sf::Vector2f velocity;
 
-        sf::RectangleShape Hitbox;
+        sf::RectangleShape collisionHitbox;
         sf::RectangleShape CharModel;
         
         sf::Vector2f textureSize;

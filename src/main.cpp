@@ -1,6 +1,8 @@
 #include "MASTER.h"
 #include "PLAYER.h"
 #include "WORLD.h"
+#include "BULLET.h"
+//#include "WEAPON.h"
 
 int main()
 {   
@@ -18,6 +20,8 @@ int main()
     int current_PlayerPosi_RoomID;
     WORLD world;
     PLAYER player;
+    std::vector<BULLET*> bullets;
+    
 
     //#player position
     sf::Vector2f playerPosi;
@@ -67,9 +71,9 @@ int main()
     //##GAME LOOP##
     while (window.isOpen())
     {
-        mousePosi = mouse.getPosition();
+        currentAnimation %= 5;
 
-        playerPosi = {player.Hitbox.getPosition().x, player.Hitbox.getPosition().y};
+        playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
 
         player.setZeroVelocity();
@@ -93,6 +97,8 @@ int main()
                         }
                         if(ev.key.code == sf::Keyboard::R)
                         {
+                            faceDIR = 1;
+                            isFaceDirChange = true;
                             world.AllClear();
                             world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
                             world.SetupMAP();
@@ -121,22 +127,29 @@ int main()
                             std :: cout << std::endl;
                         }
                         break;
+                    case sf::Event::MouseMoved:
+                        mousePosi = mouse.getPosition();
+                        break;
                 }
         }
 
-        if(currentAnimation == 5) { currentAnimation = 0; }
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, 1, 1, 100));
+        }
+
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isFaceDirChange)
         {
             isFaceDirChange = false;
-            player.Hitbox.move(1.f, 0);
+            player.collisionHitbox.move(1.f, 0);
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !isFaceDirChange)
         {
             isFaceDirChange = true;
-            player.Hitbox.move(-1.f, 0);
+            player.collisionHitbox.move(-1.f, 0);
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -206,7 +219,11 @@ int main()
         }
     
         //##UPDATE LOGIC##
-            world.PlayerCollision(playerPosi.x, playerPosi.y, current_PlayerPosi_RoomID, player.CharModel, player.Hitbox, player.velocity.x, player.velocity.y);
+            for(auto *bullet : bullets)
+            {
+                bullet->update();
+            }
+            world.PlayerCollision(playerPosi.x, playerPosi.y, current_PlayerPosi_RoomID, player.CharModel, player.collisionHitbox, player.velocity.x, player.velocity.y);
             player.movePlayer();
             view.setCenter(playerPosi.x, playerPosi.y);
 
@@ -233,13 +250,24 @@ int main()
                 }
             }
 
-            window.draw(player.Hitbox);
+            //draw player
+            window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
+
+            //draw bullet
+           /* for(auto *bullet: bullets)
+            {
+                bullet->render(&window);
+            }*/
 
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();
     }
-    //delete window;
+
+    for(auto *e: bullets)
+    {
+        delete e;
+    }
     return 0;
 }

@@ -4,13 +4,16 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
-#include <vector>
+
 #include <cstdlib>
 #include <ctime>
 #include <cstdbool>
 #include <cmath>
 #include <iostream>
 #include <stdio.h>
+
+#include <vector>
+#include <map>
 
 #define setFPS 144
 #define ScreenScale 65
