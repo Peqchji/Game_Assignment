@@ -34,7 +34,6 @@ int main()
     sf::Image icon;
     icon.loadFromFile("Icon.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());  
-    //
 
     // Setup View
     sf::View view;
@@ -72,6 +71,7 @@ int main()
     while (window.isOpen())
     {
         currentAnimation %= 5;
+        mousePosi = mouse.getPosition();
 
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
@@ -127,20 +127,12 @@ int main()
                             std :: cout << std::endl;
                         }
                         break;
-                    case sf::Event::MouseMoved:
-                        mousePosi = mouse.getPosition();
-                        break;
                 }
         }
 
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, 1, 1, 100));
-        }
-
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isFaceDirChange)
         {
             isFaceDirChange = false;
@@ -217,12 +209,18 @@ int main()
                 Frame7thCount = 0;
             }
         }
+
+         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+           printf("PEW PEW");
+           bullets.push_back(new BULLET(mousePosi.x, mousePosi.y, 0.f, 0.f, 0.f));
+        }
     
         //##UPDATE LOGIC##
-            for(auto *bullet : bullets)
+            /*for(auto *bullet : bullets)
             {
                 bullet->update();
-            }
+            }*/
             world.PlayerCollision(playerPosi.x, playerPosi.y, current_PlayerPosi_RoomID, player.CharModel, player.collisionHitbox, player.velocity.x, player.velocity.y);
             player.movePlayer();
             view.setCenter(playerPosi.x, playerPosi.y);
@@ -255,19 +253,14 @@ int main()
             window.draw(player.CharModel);
 
             //draw bullet
-           /* for(auto *bullet: bullets)
+           for(auto *e: bullets)
             {
-                bullet->render(&window);
-            }*/
+                e->render(&window);
+            }
 
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();
-    }
-
-    for(auto *e: bullets)
-    {
-        delete e;
     }
     return 0;
 }
