@@ -3,7 +3,6 @@
 #include "WORLD.h"
 #include "BULLET.h"
 //#include "WEAPON.h"
-
 int main()
 {   
     int x, y, i; //variable for Loop
@@ -21,7 +20,10 @@ int main()
     WORLD world;
     PLAYER player;
     std::vector<BULLET*> bullets;
+    std::vector<BULLET*>::iterator Bullet_iterator;
     
+    //MIDDLE of WINDOW
+    sf::Vector2f MiddleOfWin(ScreenWidth/2.f, ScreenHeight/2.f);
 
     //#player position
     sf::Vector2f playerPosi;
@@ -39,10 +41,11 @@ int main()
     sf::View view;
     sf::Event ev;
 
-    // mouse position
+    // mouse position and aiming
     sf::Mouse mouse;
-    sf::Vector2i mousePosi;
-    mouse.setPosition(sf::Vector2i(ScreenWidth/2.f, ScreenHeight/2.f));
+    sf::Vector2f mousePosi;
+    sf::Vector2f AimDir;
+    sf::Vector2f AimDir_Normal;    
 
     //Clock
     float dt;
@@ -70,16 +73,20 @@ int main()
     //##GAME LOOP##
     while (window.isOpen())
     {
+        // Pre-Update
         currentAnimation %= 5;
-        mousePosi = mouse.getPosition();
-
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
-
         player.setZeroVelocity();
+
+        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
+        AimDir = mousePosi - MiddleOfWin;
+        AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
 
         Frame7thCount++;
         dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
+
+        //event
         while(window.pollEvent(ev))
         {
                 switch(ev.type)
@@ -93,7 +100,8 @@ int main()
                         if(ev.key.code == sf::Keyboard::Q)
                         {
                             printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
-                            printf("%.0lf, %.0lf\n", playerPosi.y,playerPosi.x);
+                            printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
+                            printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
                         }
                         if(ev.key.code == sf::Keyboard::R)
                         {
@@ -212,15 +220,10 @@ int main()
 
          if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-           printf("PEW PEW");
-           bullets.push_back(new BULLET(mousePosi.x, mousePosi.y, 0.f, 0.f, 0.f));
+            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 200.f));
         }
     
-        //##UPDATE LOGIC##
-            /*for(auto *bullet : bullets)
-            {
-                bullet->update();
-            }*/
+        //##UPDATE movement LOGIC##
             world.PlayerCollision(playerPosi.x, playerPosi.y, current_PlayerPosi_RoomID, player.CharModel, player.collisionHitbox, player.velocity.x, player.velocity.y);
             player.movePlayer();
             view.setCenter(playerPosi.x, playerPosi.y);
@@ -253,9 +256,14 @@ int main()
             window.draw(player.CharModel);
 
             //draw bullet
-           for(auto *e: bullets)
+           for(auto *bullet: bullets)
             {
-                e->render(&window);
+                if(bullet->bulletCollision(world.Wall, current_PlayerPosi_RoomID))
+                {
+                    Bullet_iterator = remove(bullets.begin(), bullets.end(), bullet);
+                }
+                bullet->update(dt);
+                window.draw(bullet->bulletShape);
             }
 
             window.setView(window.getDefaultView());

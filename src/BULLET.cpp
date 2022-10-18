@@ -1,25 +1,32 @@
 #include "BULLET.h"
-BULLET::BULLET()
+void BULLET::setBulletTexture()
 {
-    //this->bulletTexture.loadFromFile("../content/bullet.png");
+    this->bulletTexture.loadFromFile("../content/bullet.png");
 }
 BULLET::BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float Speed)
 {
-    //this->bulletShape.setTexture(bulletTexture);
-    this->bulletShape.setRadius(2.f);
-    this->bulletShape.setOrigin(2, 2);
-    this->bulletShape.setPosition(init_PosX, init_PosY);
-    this->bulletShape.setFillColor(sf::Color::Red);
+    setBulletTexture();
+    this->bulletShape.setTexture(bulletTexture);
+    this->bulletShape.setOrigin(1, 2);
+    this->bulletShape.setPosition(sf::Vector2f(init_PosX, init_PosY));
     this->Direction.x = dir_x;
     this->Direction.y = dir_y;
+    this->BulletSpeed = Speed;
 }
 
-void BULLET::update()
+void BULLET::update(float deltaTime)
 {
-    this->bulletShape.move(this->BulletSpeed * this->Direction);
+    this->bulletShape.move(this->BulletSpeed * this->Direction.x * deltaTime, this->BulletSpeed * this->Direction.y * deltaTime);
 }
 
-void BULLET::render(sf::RenderTarget* target)
+bool BULLET::bulletCollision(std::vector<std::vector<sf::RectangleShape>> &WallHitbox, short currentRoom)
 {
-    target->draw(this->bulletShape);
+    for(auto &element: WallHitbox[currentRoom])
+    {
+         if((element.getGlobalBounds()).intersects(this->bulletShape.getGlobalBounds()))
+         {
+            return true;
+         }
+    }
+    return false;
 }

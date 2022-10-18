@@ -2,16 +2,17 @@
 class BULLET
 {
     private:
-        sf::CircleShape bulletShape;
         sf::Texture bulletTexture;
-
-        sf::Vector2f Direction;
-
-        float BulletSpeed;
+        
     public:
+        sf::Sprite bulletShape;
+        sf::Vector2f Direction;
+        float BulletSpeed;
         BULLET();
         BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float Speed);
 
-        void update();
-        void render(sf::RenderTarget* target);
+        bool bulletCollision(std::vector<std::vector<sf::RectangleShape>> &WallHitbox, short currentRoom);
+        void setBulletTexture();
+        void update(float deltaTime);
+        void render(sf::RenderWindow &target);
 };
