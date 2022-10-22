@@ -40,6 +40,45 @@ void PLAYER::setZeroVelocity()
    this->velocity.x = 0;
    this->velocity.y = 0;
  }
+void PLAYER::PlayerCollision(short currentRoom, std::vector<std::vector<sf::RectangleShape>> &Wall)
+{
+	sf::FloatRect nextPos;
+	sf::FloatRect WallBound;
+	sf::FloatRect PlayerBound;
+	for(auto &element: Wall[currentRoom])
+	{
+		PlayerBound = this->collisionHitbox.getGlobalBounds();
+		nextPos = PlayerBound;
+		nextPos.left += this->velocity.x;
+		nextPos.top += this->velocity.y;
+		WallBound = element.getGlobalBounds();
+		if(WallBound.intersects(nextPos))
+		{
+			if(WallBound.intersects(nextPos))
+			{
+				//Top and Bottom collision
+				if(PlayerBound.top != WallBound.top
+				&& (PlayerBound.top + PlayerBound.height) != WallBound.top + WallBound.height
+				&& PlayerBound.left < WallBound.left + WallBound.width
+				&& PlayerBound.left + PlayerBound.width > WallBound.left)
+				{
+					CharModel.move(0, -velocity.y);
+          collisionHitbox.move(0, -velocity.y);
+				}
+
+				//Right collision
+				if(PlayerBound.left != WallBound.left 
+				&& (PlayerBound.left + PlayerBound.width) != WallBound.left + WallBound.width 
+				&& PlayerBound.top < WallBound.top + WallBound.height
+				&& PlayerBound.top + PlayerBound.height > WallBound.top)
+				{
+					CharModel.move(-velocity.x, 0);
+          collisionHitbox.move(-velocity.x, 0);
+				}
+			}
+		}
+	}
+}
 
 //private//
 void PLAYER::setPlayerClass()

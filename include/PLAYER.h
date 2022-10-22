@@ -31,6 +31,8 @@ class PLAYER{
         void setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y);
         void setZeroVelocity();
         void movePlayer();
+        void PlayerCollision(short currentRoom, std::vector<std::vector<sf::RectangleShape>> &Wall);
+
     private:
         std::map<std::string, struct PlayerClassAttibute> PlayerClass;
         void setPlayerClass();

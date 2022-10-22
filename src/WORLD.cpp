@@ -794,46 +794,7 @@ int WORLD::CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room)
    }
    return room_id;
 }
-void WORLD::PlayerCollision(float Pos_x, float Pos_y, short currentRoom, sf::RectangleShape &playerModel, sf::RectangleShape &playerHitbox, float &velo_X,  float &velo_Y)
-{
-	sf::Vector2f velocity;
-	sf::FloatRect nextPos;
-	sf::FloatRect WallBound;
-	sf::FloatRect PlayerBound;
-	for(auto &element: Wall[currentRoom])
-	{
-		PlayerBound = playerHitbox.getGlobalBounds();
-		nextPos = PlayerBound;
-		nextPos.left += velo_X;
-		nextPos.top += velo_Y;
-		WallBound = element.getGlobalBounds();
-		if(WallBound.intersects(nextPos))
-		{
-			if(WallBound.intersects(nextPos))
-			{
-				//Top and Bottom collision
-				if(PlayerBound.top != WallBound.top
-				&& (PlayerBound.top + PlayerBound.height) != WallBound.top + WallBound.height
-				&& PlayerBound.left < WallBound.left + WallBound.width
-				&& PlayerBound.left + PlayerBound.width > WallBound.left)
-				{
-					playerHitbox.move(0, -velo_Y);
-					playerModel.move(0, -velo_Y);
-				}
 
-				//Right collision
-				if(PlayerBound.left != WallBound.left 
-				&& (PlayerBound.left + PlayerBound.width) != WallBound.left + WallBound.width 
-				&& PlayerBound.top < WallBound.top + WallBound.height
-				&& PlayerBound.top + PlayerBound.height > WallBound.top)
-				{
-					playerHitbox.move(-velo_X, 0);
-					playerModel.move(-velo_X, 0);
-				}
-			}
-		}
-	}
-}
 //Random Map
 /*void WORLD::RandomRoomType(short AMOUNT_Room_RNDType)
 {

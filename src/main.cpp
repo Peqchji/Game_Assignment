@@ -5,7 +5,8 @@
 //#include "WEAPON.h"
 int main()
 {   
-    int x, y, i; //variable for Loop
+    int x, y, i;
+    unsigned int bullet_count = 0; //variable for Loop
     short RoomIn_A_Map = 5;
     int currentAnimation = 0;
     float Frame7thCount = 0;
@@ -20,8 +21,12 @@ int main()
     WORLD world;
     PLAYER player;
     std::vector<BULLET*> bullets;
-    std::vector<BULLET*>::iterator Bullet_iterator;
     
+    //Timer
+    sf::Clock Timer_FireRate;
+    Timer_FireRate.restart();
+    sf::Time bullet_Timer;
+
     //MIDDLE of WINDOW
     sf::Vector2f MiddleOfWin(ScreenWidth/2.f, ScreenHeight/2.f);
 
@@ -85,6 +90,7 @@ int main()
 
         Frame7thCount++;
         dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
+        bullet_Timer = Timer_FireRate.getElapsedTime();
 
         //event
         while(window.pollEvent(ev))
@@ -141,6 +147,9 @@ int main()
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
+        faceDIR = (AimDir.x < 0)? -1: 1;
+        
+        
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isFaceDirChange)
         {
             isFaceDirChange = false;
@@ -158,25 +167,21 @@ int main()
             {
                 player.velocity.y += -(movementSpeed * dt) / sqrt(2.f);
                 player.velocity.x += -(movementSpeed * dt) / sqrt(2.f);
-                faceDIR = -1;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
                 player.velocity.y += -(movementSpeed * dt) / sqrt(2.f);
                 player.velocity.x +=  (movementSpeed * dt) / sqrt(2.f);
-                faceDIR = 1;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {   
                 player.velocity.y +=  (movementSpeed * dt) / sqrt(2.f);
                 player.velocity.x += -(movementSpeed * dt) / sqrt(2.f);
-                faceDIR = -1;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {   
                 player.velocity.y +=  (movementSpeed * dt) / sqrt(2.f);
                 player.velocity.x +=  (movementSpeed * dt) / sqrt(2.f);
-                faceDIR = 1;
             }
             // NEWS
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -186,7 +191,6 @@ int main()
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
                 player.velocity.x += -movementSpeed * dt;
-                faceDIR = -1;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
@@ -195,7 +199,6 @@ int main()
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
                 player.velocity.x += movementSpeed * dt;
-                faceDIR = 1;
             }
 
             IdleLeft = faceDIR == -1? 1: 0;
@@ -218,13 +221,14 @@ int main()
             }
         }
 
-         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > 120)
         {
-            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 200.f));
+            Timer_FireRate.restart();
+            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
         }
     
         //##UPDATE movement LOGIC##
-            world.PlayerCollision(playerPosi.x, playerPosi.y, current_PlayerPosi_RoomID, player.CharModel, player.collisionHitbox, player.velocity.x, player.velocity.y);
+            player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.movePlayer();
             view.setCenter(playerPosi.x, playerPosi.y);
 
@@ -258,17 +262,22 @@ int main()
             //draw bullet
            for(auto *bullet: bullets)
             {
-                if(bullet->bulletCollision(world.Wall, current_PlayerPosi_RoomID))
-                {
-                    Bullet_iterator = remove(bullets.begin(), bullets.end(), bullet);
-                }
                 bullet->update(dt);
+                if(bullet->bulletCollision(world.Wall, current_PlayerPosi_RoomID) && bullets.size() > 0)
+                {
+                    auto it = std::find(bullets.begin(), bullets.end(), bullet);
+                    if(it != bullets.end())
+                        bullets.erase(it);
+                }
                 window.draw(bullet->bulletShape);
+                ++bullet_count;
             }
 
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();
+
+            bullet_count = 0;
     }
     return 0;
 }

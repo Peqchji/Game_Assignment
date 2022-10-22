@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #define setFPS 144
 #define ScreenScale 65

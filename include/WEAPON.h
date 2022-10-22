@@ -10,4 +10,5 @@ class WEAPON
         void setWeaponStat();
     private:
         std::map<std::string, int> GunType;
+        void setGunType();
 };
