@@ -12,6 +12,8 @@ BULLET::BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float
     this->Direction.x = dir_x;
     this->Direction.y = dir_y;
     this->BulletSpeed = Speed;
+    this->rotate_By = ((static_cast<double>(atan(-dir_x/dir_y))* 180)/3.141592654) + 180 * (dir_y > 0? 1:0);
+    this->bulletShape.rotate(rotate_By);
 }
 
 void BULLET::update(float deltaTime)

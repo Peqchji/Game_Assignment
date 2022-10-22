@@ -224,7 +224,7 @@ int main()
          if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > 120)
         {
             Timer_FireRate.restart();
-            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
+            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 100.f));
         }
     
         //##UPDATE movement LOGIC##

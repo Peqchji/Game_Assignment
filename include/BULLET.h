@@ -3,11 +3,12 @@ class BULLET
 {
     private:
         sf::Texture bulletTexture;
-        
-    public:
-        sf::Sprite bulletShape;
         sf::Vector2f Direction;
         float BulletSpeed;
+        double rotate_By;
+        short AimDirRotate;
+    public:
+        sf::Sprite bulletShape;
         BULLET();
         BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float Speed);
 

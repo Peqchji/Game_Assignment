@@ -795,31 +795,7 @@ int WORLD::CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room)
    return room_id;
 }
 
-//Random Map
-/*void WORLD::RandomRoomType(short AMOUNT_Room_RNDType)
-{
-	short i;
-	short AmountChestRoom = (AMOUNT_Room_RNDType + 1) / 3;
-	short ChestRoomCreated = 0;
-	short TypeAssigned = 0;
-	RoomType.push_back("SpawnRoom");
-	while(TypeAssigned != AmountChestRoom - 1)
-	{
-		TypeAssigned += 1;
-		if(rand()%2 == 0 && ChestRoomCreated != AmountChestRoom)
-		{
-			RoomType.push_back("ChestRoom");
-			ChestRoomCreated += 1;
-		}
-		else
-		{
-			RoomType.push_back("EnemyRoom");
-		}
-
-	}
-	RoomType.push_back("PortalRoom");
-}*/
-
+//random map
 void WORLD::Random_GRID(short AMOUNT_Room = 5) //default number = 5 room + 1 spawnroom
 {
 	bool Nearby_Grid_Check;

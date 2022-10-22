@@ -21,6 +21,7 @@ class WORLD
 		void SetupWall(short, short, short);
 
 		int CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room);
+		void PlayerCollision(float Pos_x, float Pos_y, short currentRoom, sf::RectangleShape &playerModel, sf::RectangleShape &playerHitbox, float &velo_X,  float &velo_Y);
 
 		void AllClear();
 	private:
@@ -55,5 +56,4 @@ class WORLD
 		void WallClear();
 
 		//std::vector<std::string> RoomType;
-		void RandomRoomType(short AMOUNT_Room_RNDType);
 };
