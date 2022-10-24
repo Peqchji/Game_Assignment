@@ -1,19 +1,19 @@
 #include "PLAYER.h"
 void PLAYER::setPlayer_attribute()
 {
+	std::string bruh = "../content/Sprite/doc.png";
    //Assign Hitbox size
-   this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize - 6)/2) );
+   this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 9, (::CellPixelSize - 6)/2) );
    this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
 
    this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
-   this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 6)/2.f, (::CellPixelSize - 6)/4.f));
+   this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 9)/2.f, (::CellPixelSize - 6)/4.f));
 
    // Virsual the Hitbox
    this->collisionHitbox.setFillColor(sf::Color::Transparent);
    this->collisionHitbox.setOutlineColor(sf::Color::Red);
    this->collisionHitbox.setOutlineThickness(1.f);
 
-  this->CharModel.setFillColor(sf::Color::White);
    //Load Texture
    this->PlayerTexture.loadFromFile("../content/Sprite/doc.png");
    this->CharModel.setTexture(&PlayerTexture);

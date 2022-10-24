@@ -2,7 +2,7 @@
 #include "PLAYER.h"
 #include "WORLD.h"
 #include "BULLET.h"
-//#include "WEAPON.h"
+#include "WEAPON.h"
 int main()
 {   
     int x, y, i;
@@ -21,6 +21,7 @@ int main()
     WORLD world;
     PLAYER player;
     std::vector<BULLET*> bullets;
+    WEAPON weapon;
     
     //Timer
     sf::Clock Timer_FireRate;
@@ -65,6 +66,7 @@ int main()
     //First time set up
     view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
     player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+    weapon.init_Gun(player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
     for (y = 0; y < 9; y++)//row
         {
@@ -148,18 +150,6 @@ int main()
         // Input Handle
             // NW NE SW SE
         faceDIR = (AimDir.x < 0)? -1: 1;
-        
-        
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isFaceDirChange)
-        {
-            isFaceDirChange = false;
-            player.collisionHitbox.move(1.f, 0);
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !isFaceDirChange)
-        {
-            isFaceDirChange = true;
-            player.collisionHitbox.move(-1.f, 0);
-        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {   
@@ -224,12 +214,13 @@ int main()
          if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > 120)
         {
             Timer_FireRate.restart();
-            bullets.push_back(new BULLET(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, 100.f));
+            bullets.push_back(new BULLET(weapon.bulletGenPosi.x, weapon.bulletGenPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
         }
     
         //##UPDATE movement LOGIC##
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.movePlayer();
+            weapon.update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y, currentAnimation);
             view.setCenter(playerPosi.x, playerPosi.y);
 
         //##Render##
@@ -256,14 +247,14 @@ int main()
             }
 
             //draw player
-            window.draw(player.collisionHitbox);
+            //window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
-
+            window.draw(weapon.GunModel);
             //draw bullet
            for(auto *bullet: bullets)
             {
                 bullet->update(dt);
-                if(bullet->bulletCollision(world.Wall, current_PlayerPosi_RoomID) && bullets.size() > 0)
+                if(bullet->bulletCollision(world.Wall) && bullets.size() > 0)
                 {
                     auto it = std::find(bullets.begin(), bullets.end(), bullet);
                     if(it != bullets.end())
