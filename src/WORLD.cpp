@@ -802,7 +802,6 @@ void WORLD::Random_GRID(short AMOUNT_Room = 5) //default number = 5 room + 1 spa
 	int i, j;
 	short Amount_GridInMap = 9;
 	short MAP_CREATE_DIR;
-	srand(time(NULL));
 	// ### Create matrix for mapping ###
 	CREATE_MATRIX_POINT:
 	free(this->Field_Posi);

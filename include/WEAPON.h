@@ -1,4 +1,5 @@
 #include "MASTER.h"
+#include "BULLET.h"
 class WEAPON
 {
     public:
@@ -41,8 +42,8 @@ class WEAPON
         WEAPON();
 
         void init_Gun(float playerPosi_x, float playerPosi_y);
-        void shotOut();
-        void update(float Posi_x, float Posi_y, float dir_x, float dir_y, short currentFrame);
+        void update(float Posi_x, float Posi_y, float dir_x, float dir_y);
+        void ShotingOut(std::string type, float dir_x, float dir_y, std::vector<BULLET*> &bulletADDRs);
         
     private:
         std::map<std::string, struct GunAttribute> GunType;
