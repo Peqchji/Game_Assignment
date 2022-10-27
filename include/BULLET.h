@@ -7,6 +7,8 @@ class BULLET
         float BulletSpeed;
         double rotate_By;
         short AimDirRotate;
+
+        float bulletDamage;
     public:
         sf::Sprite bulletShape;
         BULLET();

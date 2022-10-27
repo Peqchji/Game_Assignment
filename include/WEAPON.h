@@ -41,8 +41,8 @@ class WEAPON
 
         WEAPON();
 
-        void init_Gun(float playerPosi_x, float playerPosi_y);
-        void shotOut();
+        void init_Gun(std::string &Type, float playerPosi_x, float playerPosi_y);
+        void shotingOut(std::string &Type, float dir_x, float dir_y, std::vector<BULLET*> &bullets);
         void update(float Posi_x, float Posi_y, float dir_x, float dir_y);
         
     private:

@@ -37,7 +37,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     WORLD world;
     PLAYER player;
     std::vector<BULLET*> bullets;
-    WEAPON weapon;
+    WEAPON weapon[2];
     
     //Timer
     sf::Clock Timer_FireRate;
@@ -66,6 +66,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     sf::Vector2f mousePosi;
     sf::Vector2f AimDir;
     sf::Vector2f AimDir_Normal;    
+    std::string gunType = "Shotgun";
 
     //Clock
     float dt;
@@ -80,7 +81,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     //First time set up
     view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
     player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-    weapon.init_Gun(player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
+    weapon[0].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
     for (y = 0; y < 9; y++)//row
         {
@@ -225,16 +226,18 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             }
         }
 
-         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon.FireRate)
+         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate)
         {
             Timer_FireRate.restart();
-            bullets.push_back(new BULLET(weapon.bulletGenPosi.x, weapon.bulletGenPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
+            gunType = "Shotgun";
+            weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
+            //bullets.push_back(new BULLET(weapon.bulletGenPosi.x, weapon.bulletGenPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
         }
     
         //##UPDATE movement LOGIC##
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.movePlayer();
-            weapon.update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
+            weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
 
         //##Render##
@@ -263,7 +266,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             //draw player
             //window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
-            window.draw(weapon.GunModel);
+            window.draw(weapon[0].GunModel);
             //draw bullet
            for(auto *bullet: bullets)
             {

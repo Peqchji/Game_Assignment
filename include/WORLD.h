@@ -54,6 +54,7 @@ class WORLD
 		// Clearing
 		void TileMAPClear();
 		void WallClear();
-
-		//std::vector<std::string> RoomType;
+		
+		void RandomRoomType();
+		std::vector<std::string> RoomType;
 };
