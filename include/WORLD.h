@@ -6,7 +6,6 @@ class WORLD
 		sf::Vector2f SpawnPointPos;
 		sf::RectangleShape TileMap[9][9];
 		std::vector<std::vector<sf::RectangleShape>> Wall;
-
 		struct Posi_InMap
 		{
 			short Grid_row;
@@ -16,6 +15,7 @@ class WORLD
 		WORLD();
 		~WORLD();
 		void Random_GRID(short);
+		void RandomRoomType(int amountRoom);
 		void SetupMAP();
 		void SetupRoom(short Amount_of_room);
 		void SetupWall(short, short, short);
@@ -47,6 +47,7 @@ class WORLD
 			1.rand map
 			2. setup โหลดแมพ
 		*/
+
 		void FloorLoader();
 		void WallLoader();
 		void SetupWallHitbox();
@@ -55,6 +56,4 @@ class WORLD
 		void TileMAPClear();
 		void WallClear();
 		
-		void RandomRoomType();
-		std::vector<std::string> RoomType;
 };

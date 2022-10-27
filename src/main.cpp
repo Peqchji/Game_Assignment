@@ -35,6 +35,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     short PlayerAnimationFrame = static_cast<int>(setFPS/8);
     int current_PlayerPosi_RoomID;
     WORLD world;
+
     PLAYER player;
     std::vector<BULLET*> bullets;
     WEAPON weapon[2];
@@ -71,6 +72,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     //Clock
     float dt;
     sf::Clock dt_clock;
+
+
     //##Setup Global Logic##
     world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
     world.SetupMAP();
@@ -231,7 +234,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             Timer_FireRate.restart();
             gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
-            //bullets.push_back(new BULLET(weapon.bulletGenPosi.x, weapon.bulletGenPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
         }
     
         //##UPDATE movement LOGIC##

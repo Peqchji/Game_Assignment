@@ -1,5 +1,4 @@
 ﻿#include "WORLD.h"
-
 // Construct
 WORLD::WORLD()
 {
@@ -796,6 +795,7 @@ int WORLD::CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room)
 }
 
 //random map
+
 void WORLD::Random_GRID(short AMOUNT_Room = 5) //default number = 5 room + 1 spawnroom
 {
 	bool Nearby_Grid_Check;
@@ -892,5 +892,7 @@ void WORLD::Random_GRID(short AMOUNT_Room = 5) //default number = 5 room + 1 spa
 	}
 	this->Field_Posi[AMOUNT_Room].Grid_col = PortalRoom_Posi.Grid_col;
 	this->Field_Posi[AMOUNT_Room].Grid_row = PortalRoom_Posi.Grid_row;
+
+
 }
 //End of code line

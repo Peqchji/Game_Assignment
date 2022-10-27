@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include <vector>
+#include <list>
 #include <map>
 #include <algorithm>
 
@@ -24,7 +25,7 @@ const float CellPixelSize = PIXEL; // 16*16 Pixel per Cell
 const float GridPixelSize = CellPixelSize*33; // 33 * 33 Cell per Grid
 const float ScreenWidth = ScreenScale * 16;
 const float ScreenHeight = ScreenScale * 9;
-const float movementSpeed = 300/ScaleUp;
+const float movementSpeed = 200/ScaleUp;
 
 
 #endif
