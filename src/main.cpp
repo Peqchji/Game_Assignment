@@ -3,34 +3,32 @@
 #include "WORLD.h"
 #include "WEAPON.h"
 int Gameplay(sf::RenderWindow &window, sf::View &view);
-
-
 int main()
 {   
     int gameState = 0;
-
-    srand(time(NULL));
-    sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Fullscreen);//sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Titlebar | sf::Style::Close);
     sf::View view;
-    switch (gameState)
+    switch(gameState)
     {
         case 0:
-            Gameplay(window, view);
+        Gameplay(window, view);
             break;
         default:
             break;
     }
+    return 0;
 }
 
 int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
-    int x, y, i,j;
+    int x, y, i;
     unsigned int bullet_count = 0; //variable for Loop
     short RoomIn_A_Map = 5;
     int currentAnimation = 0;
     float Frame7thCount = 0;
     bool InGame = true;
 
+    bool isFaceDirChange = true;
     short faceDIR = 1;
     short IdleLeft;
 
@@ -39,7 +37,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     WORLD world;
     PLAYER player;
     std::vector<BULLET*> bullets;
-    WEAPON weapon[2];
+    WEAPON weapon;
     
     //Timer
     sf::Clock Timer_FireRate;
@@ -53,7 +51,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     sf::Vector2f playerPosi;
 
     //##Setup Window##
-    //window.setMouseCursorVisible(false);
     window.setFramerateLimit(setFPS);
 
     //Setup Icon
@@ -83,7 +80,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     //First time set up
     view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
     player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-    weapon[0].init_Gun(player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
+    weapon.init_Gun(player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
     for (y = 0; y < 9; y++)//row
         {
@@ -131,6 +128,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         if(ev.key.code == sf::Keyboard::R)
                         {
                             faceDIR = 1;
+                            isFaceDirChange = true;
                             world.AllClear();
                             world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
                             world.SetupMAP();
@@ -227,16 +225,16 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             }
         }
 
-         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate)
-        {   
-            weapon[0].ShotingOut("Shotgun", AimDir_Normal.x, AimDir_Normal.y, bullets);
+         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon.FireRate)
+        {
             Timer_FireRate.restart();
+            bullets.push_back(new BULLET(weapon.bulletGenPosi.x, weapon.bulletGenPosi.y, AimDir_Normal.x, AimDir_Normal.y, 350.f));
         }
     
         //##UPDATE movement LOGIC##
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.movePlayer();
-            weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
+            weapon.update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
 
         //##Render##
@@ -265,7 +263,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             //draw player
             //window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
-            window.draw(weapon[0].GunModel);
+            window.draw(weapon.GunModel);
             //draw bullet
            for(auto *bullet: bullets)
             {

@@ -11,8 +11,8 @@ BULLET::BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float
     this->bulletShape.setPosition(sf::Vector2f(init_PosX, init_PosY));
     this->Direction.x = dir_x;
     this->Direction.y = dir_y;
-    BulletSpeed = Speed;
-    rotate_By = ((static_cast<double>(atan(-dir_x/dir_y))* 180)/3.141592654) + (dir_y > 0? 180:0);
+    this->BulletSpeed = Speed;
+    this->rotate_By = ((static_cast<double>(atan(-dir_x/dir_y))* 180)/3.141592654) + (dir_y > 0? 180:0);
     this->bulletShape.rotate(rotate_By);
 }
 
