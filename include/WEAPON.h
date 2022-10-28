@@ -1,3 +1,6 @@
+#ifndef WEAPON_H
+#define WEAPON_H
+
 #include "MASTER.h"
 #include "BULLET.h"
 class WEAPON
@@ -50,3 +53,4 @@ class WEAPON
         void setGunType();
         void shakeGun();
 };
+#endif

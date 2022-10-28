@@ -1,3 +1,6 @@
+#ifndef WORLD_H
+#define WORLD_H
+
 #include "MASTER.h"
 class WORLD
 {
@@ -57,3 +60,5 @@ class WORLD
 		void WallClear();
 		
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include "MASTER.h"
 class PLAYER{
     public:
@@ -37,3 +40,4 @@ class PLAYER{
         std::map<std::string, struct PlayerClassAttibute> PlayerClass;
         void setPlayerClass();
 };
+#endif

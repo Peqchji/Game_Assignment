@@ -1,7 +1,9 @@
 #include "MASTER.h"
 #include "PLAYER.h"
 #include "WORLD.h"
+#include "GAMELOGIC.h"
 #include "WEAPON.h"
+
 int Gameplay(sf::RenderWindow &window, sf::View &view);
 int main()
 {   
@@ -23,7 +25,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
     unsigned int bullet_count = 0; //variable for Loop
-    short RoomIn_A_Map = 5;
+    short RoomIn_A_Map = 9;
     int currentAnimation = 0;
     float Frame7thCount = 0;
     bool InGame = true;
@@ -35,6 +37,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     short PlayerAnimationFrame = static_cast<int>(setFPS/8);
     int current_PlayerPosi_RoomID;
     WORLD world;
+    GAMELOGIC gameLogic;
 
     PLAYER player;
     std::vector<BULLET*> bullets;
@@ -78,6 +81,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
     world.SetupMAP();
     world.SetupRoom(RoomIn_A_Map);
+    gameLogic.RandomRoomType(RoomIn_A_Map);
+
     view.setSize(ScreenWidth/ScaleUp, ScreenHeight/ScaleUp);
     player.setPlayer_attribute();
 
@@ -137,6 +142,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                             world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
                             world.SetupMAP();
                             world.SetupRoom(RoomIn_A_Map);
+                            gameLogic.RandomRoomType(RoomIn_A_Map);
+
                             view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
                             player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
                             printf("\nNew MAP Created\n");
@@ -150,13 +157,9 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                             }
                             for(i = 0; i < RoomIn_A_Map + 1; i++)
                             {
+                                std::cout << gameLogic.roomType[i] ;
                                 std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
-                                if (i == RoomIn_A_Map)
-                                {
-                                    std::cout << std::endl;
-                                    std::cout << world.SpawnPoint_Posi.Grid_row << "," << world.SpawnPoint_Posi.Grid_col << std:: endl;
-                                    std::cout << world.PortalRoom_Posi.Grid_row << "," << world.PortalRoom_Posi.Grid_col;
-                                }
+                                std :: cout << std::endl;
                             }
                             std :: cout << std::endl;
                         }

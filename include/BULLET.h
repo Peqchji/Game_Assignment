@@ -1,3 +1,5 @@
+#ifndef BULLET_H
+#define BULLET_H
 #include "MASTER.h"
 class BULLET
 {
@@ -18,3 +20,4 @@ class BULLET
         void setBulletTexture();
         void update(float deltaTime);
 };
+#endif
