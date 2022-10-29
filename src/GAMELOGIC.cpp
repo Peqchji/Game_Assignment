@@ -34,7 +34,15 @@ void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
     roomType.push_back(std::string("PortalRoom"));
 }
 
-void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, float SpawnPosi_x, float SpawnPosi_y)
+void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, float SpawnGrid_x, float SpawnGrid_y)
 {
-    Enemies.push_back(new ENEMY("MiniDemon", SpawnPosi_x, SpawnPosi_y) );
+    int i;
+    float init_Posi_x;
+    float init_Posi_y;
+    for(i = 1; i < AMOUNT_Room; i++)
+    {
+        init_Posi_x = (SpawnGrid_x * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));
+        init_Posi_y = (SpawnGrid_y * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));
+        Enemies.push_back(new ENEMY("MiniDemon", init_Posi_x, init_Posi_y) );
+    }
 }

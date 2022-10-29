@@ -14,6 +14,7 @@ ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
         this->EnemySprite.setTexture(this->EnemyTexture);
         this->TextureSize.x = this->EnemyTexture.getSize().x/8;
         this->TextureSize.y = this->EnemyTexture.getSize().y;
+        this->EnemySprite.setOrigin(sf::Vector2f(this->TextureSize.x/2.f,  this->TextureSize.y/2.f));
         EnemyAnimation = 0;
         this->Animation_CLK.restart(); 
     }

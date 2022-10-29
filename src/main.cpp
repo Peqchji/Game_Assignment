@@ -243,7 +243,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             Timer_FireRate.restart();
             gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
-            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, playerPosi.x, playerPosi.y);
+            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[0].Grid_col, world.Field_Posi[0].Grid_row);
         }
     
         //##UPDATE movement LOGIC##
