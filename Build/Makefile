@@ -1,6 +1,6 @@
 all: compile link
 
 compile:
-	g++ -I ../include/ -c ../src/main.cpp ../src/PLAYER.cpp ../src/WORLD.cpp ../src/BULLET.cpp ../src/WEAPON.cpp ../src/GAMELOGIC.cpp
+	g++ -I ../include/ -c ../src/main.cpp ../src/PLAYER.cpp ../src/WORLD.cpp ../src/BULLET.cpp ../src/WEAPON.cpp ../src/GAMELOGIC.cpp ../src/Enemies.cpp
 link:
-	g++ main.o PLAYER.o WORLD.o BULLET.o WEAPON.o GAMELOGIC.o -o "Let's Me Out The Dungeon.exe" -L ../lib/ -lsfml-graphics -lsfml-window -lsfml-system
+	g++ main.o PLAYER.o WORLD.o BULLET.o WEAPON.o GAMELOGIC.o Enemies.o -o "Let's Me Out The Dungeon.exe" -L ../lib/ -lsfml-graphics -lsfml-window -lsfml-system

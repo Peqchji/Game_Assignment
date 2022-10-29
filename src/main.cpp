@@ -4,6 +4,7 @@
 #include "GAMELOGIC.h"
 #include "WEAPON.h"
 
+
 int Gameplay(sf::RenderWindow &window, sf::View &view);
 int main()
 {   
@@ -24,8 +25,7 @@ int main()
 int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
-    unsigned int bullet_count = 0; //variable for Loop
-    short RoomIn_A_Map = 9;
+    short RoomIn_A_Map = 5;
     int currentAnimation = 0;
     float Frame7thCount = 0;
     bool InGame = true;
@@ -40,6 +40,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     GAMELOGIC gameLogic;
 
     PLAYER player;
+    std::vector<ENEMY*> Enemies;
+
     std::vector<BULLET*> bullets;
     WEAPON weapon[2];
     
@@ -89,6 +91,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     //First time set up
     view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
     player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+
     weapon[0].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
     for (y = 0; y < 9; y++)//row
@@ -128,41 +131,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     case sf::Event::KeyPressed :
                         if(ev.key.code == sf::Keyboard::Escape)
                             window.close();
-                        if(ev.key.code == sf::Keyboard::Q)
-                        {
-                            printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
-                            printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
-                            printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
-                        }
-                        if(ev.key.code == sf::Keyboard::R)
-                        {
-                            faceDIR = 1;
-                            isFaceDirChange = true;
-                            world.AllClear();
-                            world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
-                            world.SetupMAP();
-                            world.SetupRoom(RoomIn_A_Map);
-                            gameLogic.RandomRoomType(RoomIn_A_Map);
-
-                            view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
-                            player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-                            printf("\nNew MAP Created\n");
-                            for (y = 0; y < 9; y++)//row
-                            {
-                                for(x = 0; x <9; x++)//col
-                                {
-                                    std::cout << world.MAP_MATRIX[y][x] << " ";
-                                }
-                                std::cout << std::endl;
-                            }
-                            for(i = 0; i < RoomIn_A_Map + 1; i++)
-                            {
-                                std::cout << gameLogic.roomType[i] ;
-                                std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
-                                std :: cout << std::endl;
-                            }
-                            std :: cout << std::endl;
-                        }
                         break;
                 }
         }
@@ -170,6 +138,44 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
+
+        //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        {
+            printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
+            printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
+            printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+        {
+            faceDIR = 1;
+            isFaceDirChange = true;
+            world.AllClear();
+            world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
+            world.SetupMAP();
+            world.SetupRoom(RoomIn_A_Map);
+            gameLogic.RandomRoomType(RoomIn_A_Map);
+            view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
+            player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+            printf("\nNew MAP Created\n");
+            for (y = 0; y < 9; y++)//row
+            {
+                for(x = 0; x <9; x++)//col
+                {
+                    std::cout << world.MAP_MATRIX[y][x] << " ";
+                }
+                std::cout << std::endl;
+            }
+            for(i = 0; i < RoomIn_A_Map + 1; i++)
+            {
+                std::cout << gameLogic.roomType[i] ;
+                std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
+                std :: cout << std::endl;
+            }
+            std :: cout << std::endl;
+        }
+        //////////////////////////////////////////////////////////////////////////////////
+
         faceDIR = (AimDir.x < 0)? -1: 1;
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -237,6 +243,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             Timer_FireRate.restart();
             gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
+            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, playerPosi.x, playerPosi.y);
         }
     
         //##UPDATE movement LOGIC##
@@ -267,7 +274,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     window.draw(e_col);
                 }
             }
-
             //draw player
             //window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
@@ -283,14 +289,23 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         bullets.erase(it);
                 }
                 window.draw(bullet->bulletShape);
-                ++bullet_count;
+            }
+            //draw Enemies
+            for(auto *Enemy: Enemies)
+            {
+                auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);
+                {
+                    if(it_enemy != Enemies.end())
+                    {
+                        Enemy->update();
+                        window.draw(Enemy->EnemySprite);
+                    }
+                }
             }
 
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();
-
-            bullet_count = 0;
     }
     return 0;
 }

@@ -33,3 +33,8 @@ void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
 
     roomType.push_back(std::string("PortalRoom"));
 }
+
+void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, float SpawnPosi_x, float SpawnPosi_y)
+{
+    Enemies.push_back(new ENEMY("MiniDemon", SpawnPosi_x, SpawnPosi_y) );
+}
