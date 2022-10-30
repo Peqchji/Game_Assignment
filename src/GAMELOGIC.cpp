@@ -27,7 +27,7 @@ void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
     {
         if(roomType[i].compare("") == 0)
         {
-            replace(roomType.begin(), roomType.end(), roomType[i], std::string("EnemyRoom"));
+            std::replace(roomType.begin() + i, roomType.end(), roomType[i], std::string("EnemyRoom"));
         }
     }
 
@@ -39,7 +39,8 @@ void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, floa
     int i;
     float init_Posi_x;
     float init_Posi_y;
-    for(i = 1; i < AMOUNT_Room; i++)
+    int amountEnemy = AMOUNT_Room + rand()%3;
+    for(i = 0; i < amountEnemy; i++)
     {
         init_Posi_x = (SpawnGrid_x * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));
         init_Posi_y = (SpawnGrid_y * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));

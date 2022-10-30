@@ -41,7 +41,7 @@ class ENEMY
         ENEMY();
         ENEMY(std::string Type, float init_Posi_x, float init_Posi_y);
 
-        void update();
+        void update(float dt, sf::Vector2f playerposi);
 
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
@@ -49,7 +49,7 @@ class ENEMY
         sf::Time Animation_Timer;
         void setEnemyType();
 
-        bool playerCheck(sf::Vector2f &playerPosi);
+        bool playerCheck(sf::Vector2f playerPosi);
 
         void NormalInteract(float delta_Time, sf::Vector2f &Player);
 };

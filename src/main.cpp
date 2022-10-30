@@ -30,12 +30,13 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     float Frame7thCount = 0;
     bool InGame = true;
 
-    bool isFaceDirChange = true;
     short faceDIR = 1;
     short IdleLeft;
 
     short PlayerAnimationFrame = static_cast<int>(setFPS/8);
     int current_PlayerPosi_RoomID;
+    int room_id;
+
     WORLD world;
     GAMELOGIC gameLogic;
 
@@ -102,7 +103,16 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             }
             std::cout << std::endl;
         }
-    
+
+    for(i = 0; i < RoomIn_A_Map ; i++)
+    {
+        if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+        {
+            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+        }
+    }
+
+
     //##GAME LOOP##
     while (window.isOpen())
     {
@@ -142,6 +152,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
         {
+            Enemies.clear();
             printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
             printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
             printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
@@ -149,12 +160,19 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
         {
             faceDIR = 1;
-            isFaceDirChange = true;
             world.AllClear();
             world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
             world.SetupMAP();
             world.SetupRoom(RoomIn_A_Map);
             gameLogic.RandomRoomType(RoomIn_A_Map);
+            Enemies.clear();
+            for(i = 0; i < RoomIn_A_Map ; i++)
+            {
+                if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                {
+                    gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                }
+            }
             view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
             player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
             printf("\nNew MAP Created\n");
@@ -243,7 +261,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             Timer_FireRate.restart();
             gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
-            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[0].Grid_col, world.Field_Posi[0].Grid_row);
         }
     
         //##UPDATE movement LOGIC##
@@ -297,7 +314,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 {
                     if(it_enemy != Enemies.end())
                     {
-                        Enemy->update();
+                        Enemy->update(dt, playerPosi);
                         window.draw(Enemy->EnemySprite);
                     }
                 }

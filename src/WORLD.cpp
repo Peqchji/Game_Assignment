@@ -594,21 +594,6 @@ void WORLD::SetupWall(short row, short col, short RoomType)
 		this->Wall_HitBox15[0].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * BottomWall_ofRoom.x), (row*::GridPixelSize ) + ::CellPixelSize *  BottomWall_ofRoom.y));
 		temp.push_back(Wall_HitBox15[0]);
 
-		this->Wall_HitBox8[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Left.x), (row*::GridPixelSize )));
-		temp.push_back(Wall_HitBox8[2]);
-		this->Wall_HitBox8[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Right.x), (row*::GridPixelSize )));
-		temp.push_back(Wall_HitBox8[1]);
-		for(idx = 0; idx < 2; idx++)
-		{
-			this->Wall_HitBox8[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (Right_HallWay_Top.x)), (row*::GridPixelSize ) + ::CellPixelSize*(Right_HallWay_Top.y + (idx*6)));
-			temp.push_back(Wall_HitBox8[0]);
-		}
-		for(idx = 0; idx < 2; idx++)
-		{
-			this->Wall_HitBox8[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (Left_HallWay_Top.x)), (row*::GridPixelSize ) + ::CellPixelSize*(Left_HallWay_Top.y + (idx*6)));
-			temp.push_back(Wall_HitBox8[0]);
-		}
-
 		this->Wall_HitBox4[1].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (RightWall_ofRoom.x)), (row*::GridPixelSize ) + (::CellPixelSize * (RightWall_ofRoom.y)));
 		temp.push_back(Wall_HitBox4[1]);
 		this->Wall_HitBox5[1].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (RightWall_ofRoom.x)), (row*::GridPixelSize ) + (::CellPixelSize * (RightWall_ofRoom.y + 10)));
@@ -623,15 +608,27 @@ void WORLD::SetupWall(short row, short col, short RoomType)
 			this->Wall_HitBox5[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (TopWall_ofRoom.x + (idx*10))), (row*::GridPixelSize ) + ::CellPixelSize*TopWall_ofRoom.y);
 			temp.push_back(Wall_HitBox5[0]);
 		}
-		break;
-	case 11:
-		this->Wall_HitBox15[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * LeftWall_ofRoom.x), (row*::GridPixelSize ) + ::CellPixelSize * LeftWall_ofRoom.y));
-		temp.push_back(Wall_HitBox15[2]);
+
+		for(idx = 0; idx < 2; idx++)
+		{
+			this->Wall_HitBox8[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (Right_HallWay_Top.x)), (row*::GridPixelSize ) + ::CellPixelSize*(Right_HallWay_Top.y + (idx*6)));
+			temp.push_back(Wall_HitBox8[0]);
+		}
+		for(idx = 0; idx < 2; idx++)
+		{
+			this->Wall_HitBox8[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (Left_HallWay_Top.x)), (row*::GridPixelSize ) + ::CellPixelSize*(Left_HallWay_Top.y + (idx*6)));
+			temp.push_back(Wall_HitBox8[0]);
+		}
 
 		this->Wall_HitBox8[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Left.x), (row*::GridPixelSize )));
 		temp.push_back(Wall_HitBox8[2]);
 		this->Wall_HitBox8[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Right.x), (row*::GridPixelSize )));
 		temp.push_back(Wall_HitBox8[1]);
+		break;
+	case 11:
+		this->Wall_HitBox15[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * LeftWall_ofRoom.x), (row*::GridPixelSize ) + ::CellPixelSize * LeftWall_ofRoom.y));
+		temp.push_back(Wall_HitBox15[2]);
+
 		for(idx = 0; idx < 2; idx++)
 		{
 			this->Wall_HitBox8[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (Right_HallWay_Top.x)), (row*::GridPixelSize ) + ::CellPixelSize*(Right_HallWay_Top.y + (idx*6)));
@@ -653,6 +650,11 @@ void WORLD::SetupWall(short row, short col, short RoomType)
 			this->Wall_HitBox5[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (BottomWall_ofRoom.x + (idx*10))), (row*::GridPixelSize ) + ::CellPixelSize*BottomWall_ofRoom.y);
 			temp.push_back(Wall_HitBox5[0]);
 		}
+
+		this->Wall_HitBox8[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Left.x), (row*::GridPixelSize )));
+		temp.push_back(Wall_HitBox8[2]);
+		this->Wall_HitBox8[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Right.x), (row*::GridPixelSize )));
+		temp.push_back(Wall_HitBox8[1]);
 
 		this->Wall_HitBox9[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Bottom_HallWay_Left.x), (row*::GridPixelSize + (::CellPixelSize * Bottom_HallWay_Left.y))));
 		temp.push_back(Wall_HitBox9[1]);
