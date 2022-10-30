@@ -29,6 +29,7 @@ class ENEMY
         float Enemy_Health;
         int EnemyAnimation;
         
+        std::string EntityType;
         std::string behaviour;
         sf::Vector2f Position;
         sf::Sprite EnemySprite;
@@ -49,7 +50,7 @@ class ENEMY
         sf::Time Animation_Timer;
         void setEnemyType();
 
-        bool playerCheck(sf::Vector2f playerPosi);
+        bool playerDetected(sf::Vector2f playerPosi);
 
         void NormalInteract(float delta_Time, sf::Vector2f &Player);
 };

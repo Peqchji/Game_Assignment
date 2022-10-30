@@ -1,26 +1,39 @@
 #include "PLAYER.h"
 void PLAYER::setPlayer_attribute()
 {
-	std::string bruh = "../content/Sprite/doc.png";
-   //Assign Hitbox size
-   this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 9, (::CellPixelSize - 6)/2) );
-   this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
+   setPlayerClass();
+   std::map<std::string, struct PlayerClassAttibute>::iterator it;
+    auto random_key = PlayerClass.begin();
+    std::advance(random_key, rand() % PlayerClass.size());
+    it = PlayerClass.find(random_key->first);
+    if (it != PlayerClass.end())
+	{
+		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 9, (::CellPixelSize - 6)/2) );
+   		this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
 
-   this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
-   this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 9)/2.f, (::CellPixelSize - 6)/4.f));
+   		this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
+   		this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 9)/2.f, (::CellPixelSize - 6)/4.f));
 
-   // Virsual the Hitbox
-   this->collisionHitbox.setFillColor(sf::Color::Transparent);
-   this->collisionHitbox.setOutlineColor(sf::Color::Red);
-   this->collisionHitbox.setOutlineThickness(1.f);
+   		// Virsual the Hitbox
+   		this->collisionHitbox.setFillColor(sf::Color::Transparent);
+   		this->collisionHitbox.setOutlineColor(sf::Color::Red);
+   		this->collisionHitbox.setOutlineThickness(1.f);
 
-   //Load Texture
-   this->PlayerTexture.loadFromFile("../content/Sprite/doc.png");
-   this->CharModel.setTexture(&PlayerTexture);
-   this->textureSize.x = (this->PlayerTexture.getSize().x);
-   this->textureSize.y = (this->PlayerTexture.getSize().y);
-   this->textureSize.x /= 8;
-   this->textureSize.y /= 1;
+   		//Load Texture
+   		this->PlayerTexture.loadFromFile(it->second.texture);
+   		this->CharModel.setTexture(&PlayerTexture);
+   		this->textureSize.x = (this->PlayerTexture.getSize().x)/8.f;
+   		this->textureSize.y = (this->PlayerTexture.getSize().y);
+
+		player_Health = it->second.Health;
+		player_Ammor = it->second.Ammor;
+		player_Energy = it->second.Ammor;
+		player_Crit_Chance = it->second.Crit_Chance;
+		this->player_Skill = it->second.Skill;
+
+   		currentAnimation = 0;
+   		this->Animation_CLK.restart();
+	}
 }
 
 void PLAYER::setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y)
@@ -29,8 +42,23 @@ void PLAYER::setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y)
    this->CharModel.setPosition(SpawnPoint_x, SpawnPoint_y - 8);
 }
 
-void PLAYER::movePlayer()
+void PLAYER::update(float dir_x)
  {
+   this->Animation_Timer = Animation_CLK.getElapsedTime();
+   if(this->Animation_Timer.asMilliseconds() > 125)
+   {
+		currentAnimation = (currentAnimation + 1) % 4;
+		this->Animation_CLK.restart();
+   }
+   
+   if(this->velocity.x != 0 || this->velocity.y != 0)
+   {
+		this->CharModel.setTextureRect(sf::IntRect(this->textureSize.x * (currentAnimation + (dir_x < 0? 5:4)), 0, (dir_x < 0? -1:1) * this->textureSize.x, this->textureSize.y));
+   }
+   else
+   {
+		this->CharModel.setTextureRect(sf::IntRect(this->textureSize.x * (currentAnimation + (dir_x < 0? 1:0)), 0, (dir_x < 0? -1:1) * this->textureSize.x, this->textureSize.y));
+   }
    this->collisionHitbox.move(this->velocity.x, this->velocity.y);
    this->CharModel.move(this->velocity.x, this->velocity.y);
  }
@@ -85,8 +113,8 @@ void PLAYER::setPlayerClass()
 {
   PlayerClass = 
   {
-    {"Knight", PlayerClassAttibute(6, 5, 180, 5, "Dual Wielding")},
-    {"Priest", PlayerClassAttibute(12, 3, 200, 1, "Heal")},
-    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, "FatalShot")}
+    {"Knight", PlayerClassAttibute(6, 5, 180, 5, std::string("../content/Sprite/Knight.png"), std::string("Dual Wielding"))},
+    {"Priest", PlayerClassAttibute(12, 3, 200, 1, std::string("../content/Sprite/Priest.png"), std::string("Heal"))},
+    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, std::string("../content/Sprite/Rogue.png"), std::string("FatalShot"))}
   };
 }

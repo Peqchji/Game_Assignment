@@ -26,14 +26,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
     short RoomIn_A_Map = 5;
-    int currentAnimation = 0;
-    float Frame7thCount = 0;
     bool InGame = true;
 
-    short faceDIR = 1;
-    short IdleLeft;
-
-    short PlayerAnimationFrame = static_cast<int>(setFPS/8);
     int current_PlayerPosi_RoomID;
     int room_id;
 
@@ -117,7 +111,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     while (window.isOpen())
     {
         // Pre-Update
-        currentAnimation %= 5;
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
         player.setZeroVelocity();
@@ -126,7 +119,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         AimDir = mousePosi - MiddleOfWin;
         AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
 
-        Frame7thCount++;
         dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
         bullet_Timer = Timer_FireRate.getElapsedTime();
 
@@ -159,7 +151,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
         {
-            faceDIR = 1;
             world.AllClear();
             world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
             world.SetupMAP();
@@ -193,8 +184,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             std :: cout << std::endl;
         }
         //////////////////////////////////////////////////////////////////////////////////
-
-        faceDIR = (AimDir.x < 0)? -1: 1;
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {   
@@ -235,27 +224,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             {
                 player.velocity.x += movementSpeed * dt;
             }
-
-            IdleLeft = faceDIR == -1? 1: 0;
-            if(Frame7thCount == PlayerAnimationFrame)
-            {
-                player.CharModel.setTextureRect(sf::IntRect((player.textureSize.x)*(currentAnimation + 3 + IdleLeft), 0, (player.textureSize.x)*faceDIR, (player.textureSize.y)));
-                currentAnimation++;
-                Frame7thCount = 0;
-            }  
         }
-        else
-        {
-            IDLE:
-            if(Frame7thCount == PlayerAnimationFrame)
-            {
-                IdleLeft = faceDIR == -1? 1: 0;
-                player.CharModel.setTextureRect(sf::IntRect((player.textureSize.x)*(currentAnimation + IdleLeft), 0, (player.textureSize.x)*faceDIR, (player.textureSize.y)));
-                currentAnimation++;
-                Frame7thCount = 0;
-            }
-        }
-
          if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate)
         {
             Timer_FireRate.restart();
@@ -265,7 +234,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     
         //##UPDATE movement LOGIC##
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
-            player.movePlayer();
+            player.update(AimDir.x);
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
 
@@ -299,7 +268,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
            for(auto *bullet: bullets)
             {
                 bullet->update(dt);
-                if(bullet->bulletCollision(world.Wall) && bullets.size() > 0)
+                if((bullet->bulletCollision(world.Wall) || bullet->bulletLifeTime()) && bullets.size() > 0)
                 {
                     auto it = std::find(bullets.begin(), bullets.end(), bullet);
                     if(it != bullets.end())
