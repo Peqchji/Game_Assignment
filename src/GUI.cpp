@@ -12,10 +12,8 @@ GUI::GUI()
     this->baseGUI.setScale(sf::Vector2f(1.f/ScaleUp, 1.f/ScaleUp));
 
     this->HPbar.setTexture(this->frontHP);
-    this->HPbar.scale(sf::Vector2f((204.f/50)/ScaleUp, (13.f/3)/ScaleUp));
 
     this->Energybar.setTexture(this->frontEnergy);
-    this->Energybar.scale(sf::Vector2f((204.f/50)/ScaleUp, (13.f/3)/ScaleUp));
 
     this->_selector.setTexture(this->selector);
     this->_selector.scale(sf::Vector2f((25.f/6)/ScaleUp, (21.f/5)/ScaleUp));
@@ -29,6 +27,11 @@ GUI::GUI()
 
 void GUI::update(float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentCrit)
 {
+    float progess_bar_x = (204.f/50)/ScaleUp;
+    float progess_bar_y = (13.f/3)/ScaleUp;
+    
+    this->HPbar.setScale(currentHP/MaxHP * progess_bar_x, progess_bar_y);
+    this->Energybar.setScale(currentEnergy/MaxEnergy * progess_bar_x, progess_bar_y);
 
     setup_newGUI(setupPosi_x, setupPosi_y);
 }

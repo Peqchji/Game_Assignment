@@ -223,6 +223,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             Timer_FireRate.restart();
             gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
+            player.current_Health -= 1;
         }
     
         //##UPDATE movement LOGIC##
@@ -230,9 +231,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             player.update(AimDir.x);
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
-            gui.setup_newGUI(playerPosi.x, playerPosi.y);
-            
-
+            gui.update(playerPosi.x, playerPosi.y, player.current_Health, player.current_Energy, player.player_Health, player.player_Energy, player.player_Crit_Chance);
 
         //##Render##
         // clear old frame before render new one
