@@ -26,9 +26,16 @@ void PLAYER::setPlayer_attribute()
    		this->textureSize.y = (this->PlayerTexture.getSize().y);
 
 		player_Health = it->second.Health;
+		current_Health = player_Health;
+
 		player_Ammor = it->second.Ammor;
+		current_Ammor = player_Ammor;
+
 		player_Energy = it->second.Ammor;
+		current_Energy = player_Energy;
+
 		player_Crit_Chance = it->second.Crit_Chance;
+		current_Crit_Chance = player_Crit_Chance;
 		this->player_Skill = it->second.Skill;
 
    		currentAnimation = 0;

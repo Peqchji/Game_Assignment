@@ -25,9 +25,16 @@ class PLAYER{
         };
 
         float player_Health;
+        float current_Health;
+
         float player_Ammor;
+        float current_Ammor;
+
         float player_Energy;
+        float current_Energy;
+        
         float player_Crit_Chance;
+        float current_Crit_Chance;
         std::string player_Skill;
 
 

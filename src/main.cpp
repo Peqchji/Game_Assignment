@@ -3,7 +3,7 @@
 #include "WORLD.h"
 #include "GAMELOGIC.h"
 #include "WEAPON.h"
-
+#include "GUI.h"
 
 int Gameplay(sf::RenderWindow &window, sf::View &view);
 int main()
@@ -33,6 +33,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     WORLD world;
     GAMELOGIC gameLogic;
+    GUI gui;
 
     PLAYER player;
     std::vector<ENEMY*> Enemies;
@@ -89,15 +90,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     weapon[0].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
-    for (y = 0; y < 9; y++)//row
-        {
-            for(x = 0; x < 9; x++)//col
-            {
-                std::cout << world.MAP_MATRIX[y][x] << " ";
-            }
-            std::cout << std::endl;
-        }
-
     for(i = 0; i < RoomIn_A_Map ; i++)
     {
         if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
@@ -142,6 +134,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             // NW NE SW SE
 
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
+        
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
         {
             Enemies.clear();
@@ -237,10 +230,13 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             player.update(AimDir.x);
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
+            gui.setup_newGUI(playerPosi.x, playerPosi.y);
+            
+
 
         //##Render##
         // clear old frame before render new one
-            window.clear(sf::Color::Black);
+            window.clear(sf::Color::Transparent);
             window.setView(view);
 
         // Draw game object
@@ -249,7 +245,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             {
                 for(y = 0; y < 9; y++)
                 {
-                        window.draw(world.TileMap[x][y]);
+                       window.draw(world.TileMap[x][y]);
                 }
             }
             //Draw wall object
@@ -260,6 +256,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     window.draw(e_col);
                 }
             }
+
             //draw player
             //window.draw(player.collisionHitbox);
             window.draw(player.CharModel);
@@ -289,6 +286,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 }
             }
 
+            window.draw(gui.currentGUI);
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();

@@ -40,7 +40,8 @@ bool ENEMY::playerDetected(sf::Vector2f playerPosi)
     this->Position = this->EnemySprite.getPosition();
     this->diff_Position = playerPosi - this->Position - sf::Vector2f(0.f, 8.f);
     distance = sqrt(pow(diff_Position.x, 2) + pow(diff_Position.y, 2));
-    dir_normal = diff_Position / static_cast<float>(distance);
+    dir_normal.x = diff_Position.x / static_cast<float>(distance);
+    dir_normal.y = diff_Position.y / static_cast<float>(distance);
     if(distance < ::CellPixelSize * detection_Dist)
         { return true; }
     return false;
