@@ -43,6 +43,7 @@ class ENEMY
         ENEMY(std::string Type, float init_Posi_x, float init_Posi_y);
 
         void update(float dt, sf::Vector2f playerposi);
+        void getHitted();
 
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;

@@ -31,7 +31,7 @@ void PLAYER::setPlayer_attribute()
 		player_Ammor = it->second.Ammor;
 		current_Ammor = player_Ammor;
 
-		player_Energy = it->second.Ammor;
+		player_Energy = it->second.Energy;
 		current_Energy = player_Energy;
 
 		player_Crit_Chance = it->second.Crit_Chance;

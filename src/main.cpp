@@ -69,6 +69,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     sf::Vector2f AimDir;
     sf::Vector2f AimDir_Normal;    
     std::string gunType = "Shotgun";
+    int currentGun = 0;
 
     //Clock
     float dt;
@@ -125,6 +126,15 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     case sf::Event::KeyPressed :
                         if(ev.key.code == sf::Keyboard::Escape)
                             window.close();
+                        if(ev.key.code == sf::Keyboard::P)
+                        {
+                            currentGun = (currentGun+1) % weapon[0].GunType.size();
+                            std::map<std::string, struct GunAttribute>::iterator it;
+                            auto key = weapon[0].GunType.begin();
+                            std::advance(key, currentGun);
+                            gunType = key->first;
+                            weapon[0].init_Gun(gunType, playerPosi.x, playerPosi.y);
+                        }
                         break;
                 }
         }
@@ -218,12 +228,11 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 player.velocity.x += movementSpeed * dt;
             }
         }
-         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate)
+         if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate && ((player.current_Energy - weapon[0].Cost) >= 0))
         {
             Timer_FireRate.restart();
-            gunType = "Shotgun";
             weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
-            player.current_Health -= 1;
+            player.current_Energy -= weapon[0].Cost;
         }
     
         //##UPDATE movement LOGIC##

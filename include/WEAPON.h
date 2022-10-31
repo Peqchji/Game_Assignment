@@ -48,8 +48,8 @@ class WEAPON
         void shotingOut(std::string &Type, float dir_x, float dir_y, std::vector<BULLET*> &bullets);
         void update(float Posi_x, float Posi_y, float dir_x, float dir_y);
         
-    private:
         std::map<std::string, struct GunAttribute> GunType;
+    private:
         void setGunType();
         void shakeGun();
 };

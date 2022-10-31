@@ -28,7 +28,7 @@ void  ENEMY::setEnemyType()
     EnemyType = 
   {
     {"MiniDemon", EnemyAttribute(2.f, 15.f, 50.f, std::string("Normal") ,std::string("../content/Sprite/MiniDemon.png"))},
-    {"Splinter", EnemyAttribute(2.f, 1.f, 125.f, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))}
+    {"Splinter", EnemyAttribute(2.f, 1.f, 100.f, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))}
   };
 }
 
