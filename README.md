@@ -9,7 +9,8 @@
 		🟢 Floor load and draw
 		🟢 Wall load and draw
 		🟢 Wall collision
-	🔴 Menu or HUB
+	🔴 Menu or HUB and pause system
+	🔴 leaderboard
 	🟡 UI
 	🟡 Player Logic
 	🟢 Player class
