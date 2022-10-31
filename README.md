@@ -5,20 +5,19 @@
 🟡 In Progress
 
 
-	🟡 MAP
-		🔴 Door system
+	🟢 MAP
 		🟢 Floor load and draw
 		🟢 Wall load and draw
 		🟢 Wall collision
 	🔴 Menu or HUB
-	🔴 UI
-	🔴 Player Logic
-	🔴 Player class
-	🔴 Enemy Logic
-	🔴 Gun and Bullet logic
+	🟡 UI
+	🟡 Player Logic
+	🟢 Player class
+	🟢 Enemy Logic
+	🟡 Gun and Bullet logic
 	🟡 Movement
 		🟢 player movement
-		🔴 Enemy
-		🔴 bullet
+		🟡 Enemy
+		🟢 bullet
 	🟢 Map Generate Logic
 	🟢 Screen
