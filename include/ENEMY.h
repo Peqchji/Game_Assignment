@@ -42,18 +42,25 @@ class ENEMY
         ENEMY();
         ENEMY(std::string Type, float init_Posi_x, float init_Posi_y);
 
-        void update(float dt, sf::Vector2f playerposi);
+        void update(float dt, sf::Vector2f playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
         void getHitted();
 
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
         sf::Clock Animation_CLK;
         sf::Time Animation_Timer;
+
+        sf::Vector2f EnemyVelocity;
+        sf::RectangleShape EnemyHitbox;
+        sf::RectangleShape EnemyCollisionHitbox;
+
         void setEnemyType();
 
         bool playerDetected(sf::Vector2f playerPosi);
+        void NormalInteract(float delta_Time, sf::Vector2f &Player, std::vector<std::vector<sf::RectangleShape>> Wall);
+        
+        void WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall);
 
-        void NormalInteract(float delta_Time, sf::Vector2f &Player);
 };
 
 #endif

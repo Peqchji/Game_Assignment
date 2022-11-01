@@ -8,16 +8,16 @@ void PLAYER::setPlayer_attribute()
     it = PlayerClass.find(random_key->first);
     if (it != PlayerClass.end())
 	{
-		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 9, (::CellPixelSize - 6)/2) );
+		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize - 6)/2) );
    		this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
 
    		this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
-   		this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 9)/2.f, (::CellPixelSize - 6)/4.f));
+   		this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 7)/2.f, (::CellPixelSize - 6)/4.f));
 
    		// Virsual the Hitbox
-   		this->collisionHitbox.setFillColor(sf::Color::Transparent);
-   		this->collisionHitbox.setOutlineColor(sf::Color::Red);
-   		this->collisionHitbox.setOutlineThickness(1.f);
+   		this->collisionHitbox.setFillColor(sf::Color::Red);
+   		/*this->collisionHitbox.setOutlineColor(sf::Color::Red);
+   		this->collisionHitbox.setOutlineThickness(1.f);*/
 
    		//Load Texture
    		this->PlayerTexture.loadFromFile(it->second.texture);
@@ -91,24 +91,49 @@ void PLAYER::PlayerCollision(short currentRoom, std::vector<std::vector<sf::Rect
 		{
 			if(WallBound.intersects(nextPos))
 			{
-				//Top and Bottom collision
+				//Top Bottom collision
 				if(PlayerBound.top != WallBound.top
 				&& (PlayerBound.top + PlayerBound.height) != WallBound.top + WallBound.height
 				&& PlayerBound.left < WallBound.left + WallBound.width
 				&& PlayerBound.left + PlayerBound.width > WallBound.left)
 				{
-					CharModel.move(0, -velocity.y);
-          collisionHitbox.move(0, -velocity.y);
-				}
+					if(PlayerBound.left + PlayerBound.width*0.1 < WallBound.left
+					&& PlayerBound.left < WallBound.left)
+					{
+						this->CharModel.move(-this->velocity.x + (PlayerBound.top > WallBound.top? 1:-1) * this->velocity.y, 0);
+          				this->collisionHitbox.move(-this->velocity.x + (PlayerBound.top > WallBound.top? 1:-1) * this->velocity.y, 0);
+					}
+					else if(PlayerBound.left + PlayerBound.width*0.9 > WallBound.width + WallBound.width
+					&& PlayerBound.left + PlayerBound.width > WallBound.left + WallBound.width)
+					{
+						this->CharModel.move(-this->velocity.x -  (PlayerBound.top > WallBound.top? 1:-1) * this->velocity.y, 0);
+          				this->collisionHitbox.move(-this->velocity.x -  (PlayerBound.top > WallBound.top? 1:-1) * this->velocity.y, 0);
+					}
 
-				//Right collision
+					this->CharModel.move(0, -this->velocity.y);
+          			this->collisionHitbox.move(0, -this->velocity.y);
+				}
+			
+				//Left Right collision
 				if(PlayerBound.left != WallBound.left 
 				&& (PlayerBound.left + PlayerBound.width) != WallBound.left + WallBound.width 
 				&& PlayerBound.top < WallBound.top + WallBound.height
 				&& PlayerBound.top + PlayerBound.height > WallBound.top)
 				{
-					CharModel.move(-velocity.x, 0);
-          collisionHitbox.move(-velocity.x, 0);
+					if(PlayerBound.top + PlayerBound.height*0.1 < WallBound.top
+					&& PlayerBound.top < WallBound.top)
+					{
+						this->CharModel.move(0, (PlayerBound.left > WallBound.left? 1:-1)  * this->velocity.x - this->velocity.y);
+          				this->collisionHitbox.move(0, (PlayerBound.left > WallBound.left? 1:-1)  *this->velocity.x - this->velocity.y);
+					}
+					else if(PlayerBound.top + PlayerBound.height*0.9 > WallBound.top + WallBound.height
+					&& PlayerBound.top + PlayerBound.height > WallBound.top + WallBound.height)
+					{
+						this->CharModel.move(0, -(PlayerBound.left > WallBound.left? 1:-1) * this->velocity.x - this->velocity.y);
+          				this->collisionHitbox.move(0, -(PlayerBound.left > WallBound.left? 1:-1)  * this->velocity.x - this->velocity.y);
+					}
+					this->CharModel.move(-this->velocity.x, 0);
+          			this->collisionHitbox.move(-this->velocity.x, 0);
 				}
 			}
 		}

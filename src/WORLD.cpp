@@ -312,8 +312,8 @@ void WORLD::SetupWallHitbox()
 	this->Wall_HitBox9[1].setFillColor(sf::Color::White);
 	this->Wall_HitBox9[1].setTexture(&WallTexture[13]);
 
-	/*//virsualize wall
-	this->Wall_HitBox15[0].setOutlineColor(sf::Color::Red);
+	//virsualize wall
+	/*this->Wall_HitBox15[0].setOutlineColor(sf::Color::Red);
 	this->Wall_HitBox15[0].setOutlineThickness(1.f);
 	this->Wall_HitBox15[1].setOutlineColor(sf::Color::Red);
 	this->Wall_HitBox15[1].setOutlineThickness(1.f);
@@ -710,10 +710,6 @@ void WORLD::SetupWall(short row, short col, short RoomType)
 			temp.push_back(Wall_HitBox8[0]);
 		}
 
-		this->Wall_HitBox9[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Bottom_HallWay_Left.x), (row*::GridPixelSize + (::CellPixelSize * Bottom_HallWay_Left.y))));
-		temp.push_back(Wall_HitBox9[1]);
-		this->Wall_HitBox9[0].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Bottom_HallWay_Right.x), (row*::GridPixelSize + (::CellPixelSize * Bottom_HallWay_Right.y) )));
-		temp.push_back(Wall_HitBox9[0]);
 
 		this->Wall_HitBox4[2].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (LeftWall_ofRoom.x)), (row*::GridPixelSize ) + (::CellPixelSize * (LeftWall_ofRoom.y)));
 		temp.push_back(Wall_HitBox4[2]);
@@ -729,6 +725,10 @@ void WORLD::SetupWall(short row, short col, short RoomType)
 			this->Wall_HitBox5[0].setPosition( (col*::GridPixelSize) + (::CellPixelSize * (BottomWall_ofRoom.x + (idx*10))), (row*::GridPixelSize ) + ::CellPixelSize*BottomWall_ofRoom.y);
 			temp.push_back(Wall_HitBox5[0]);
 		}
+		this->Wall_HitBox9[1].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Bottom_HallWay_Left.x), (row*::GridPixelSize + (::CellPixelSize * Bottom_HallWay_Left.y))));
+		temp.push_back(Wall_HitBox9[1]);
+		this->Wall_HitBox9[0].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Bottom_HallWay_Right.x), (row*::GridPixelSize + (::CellPixelSize * Bottom_HallWay_Right.y) )));
+		temp.push_back(Wall_HitBox9[0]);
 		break;
 	case 14:
 		this->Wall_HitBox8[2].setPosition(sf::Vector2f( (col*::GridPixelSize) + (::CellPixelSize * Top_HallWay_Left.x), (row*::GridPixelSize )));

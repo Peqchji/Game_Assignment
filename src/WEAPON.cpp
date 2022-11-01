@@ -52,8 +52,8 @@ void WEAPON::setGunType()
     GunType = 
   {
     {"Pistol", GunAttribute(4, 0, 0, 3, sf::Vector2f(7.f, -4.f), sf::Vector2f(4.f, 6.f), "../content/Pistol.png")},
-    {"Desert Eagle", GunAttribute(4, 1, 10, 2.7, sf::Vector2f(7.f, -1.f), sf::Vector2f(6.f, 4.f), "../content/Desert_Eagle.png")},
-    {"AK-47", GunAttribute(3, 1, 12, 6, sf::Vector2f(25.f, -5.f), sf::Vector2f(6.f, 9.f), "../content/AK-47.png")},
+    {"Desert Eagle", GunAttribute(4, 1, 10, 2.7, sf::Vector2f(6.f, -3.f), sf::Vector2f(4.f, 6.f), "../content/Desert_Eagle.png")},
+    {"AK-47", GunAttribute(3, 1, 12, 6, sf::Vector2f(25.f, -7.f), sf::Vector2f(6.f, 9.f), "../content/AK-47.png")},
     //{"Assault Rifle Elite", GunAttribute(2, 1, 5, 8, , )},
     {"Shotgun", GunAttribute(3, 3, 0, 1.2, sf::Vector2f(25.f, -6.f), sf::Vector2f(8.f, 8.f), "../content/Shotgun.png")},
     //{"Tactical Shotgun", GunAttribute(12, 3, 5, 2, , )},

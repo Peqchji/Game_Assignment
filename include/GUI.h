@@ -8,9 +8,8 @@ class GUI{
         sf::RenderTexture GUI_buffer;
         sf::Sprite currentGUI;
 
-        void update(float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentCrit);
         GUI();
-        void setup_newGUI(float posi_x, float posi_y);
+        void update(float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentCrit);
     private:
         sf::Texture frontHP;
         sf::Texture selector;
@@ -22,7 +21,7 @@ class GUI{
         sf::Sprite Energybar;
         sf::Sprite _selector;
 
-       // void setup_newGUI(float posi_x, float posi_y);
+        void setup_newGUI(float posi_x, float posi_y);
         float MAX_HP;
         float MAX_Energy;
         std::string holding;

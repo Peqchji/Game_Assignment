@@ -25,7 +25,7 @@ int main()
 int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
-    short RoomIn_A_Map = 5;
+    short RoomIn_A_Map = 9;
     bool InGame = true;
 
     int current_PlayerPosi_RoomID;
@@ -135,6 +135,11 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                             gunType = key->first;
                             weapon[0].init_Gun(gunType, playerPosi.x, playerPosi.y);
                         }
+                        if(ev.key.code == sf::Keyboard::O)
+                        {
+                            break;
+                        }
+                    default:
                         break;
                 }
         }
@@ -288,7 +293,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 {
                     if(it_enemy != Enemies.end())
                     {
-                        Enemy->update(dt, playerPosi);
+                        Enemy->update(dt, playerPosi, world.Wall);
                         window.draw(Enemy->EnemySprite);
                     }
                 }
