@@ -22,18 +22,18 @@ class WORLD
 		void SetupMAP();
 		void SetupRoom(short Amount_of_room);
 		void SetupWall(short, short, short);
-
+		int CurrentEnemyGrid(float Pos_x, float Pos_y, short Amount_of_Room);
 		int CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room);
 		void PlayerCollision(float Pos_x, float Pos_y, short currentRoom, sf::RectangleShape &playerModel, sf::RectangleShape &playerHitbox, float &velo_X,  float &velo_Y);
 
 		void AllClear();
 	private:
 		sf::RectangleShape Wall_HitBox15[3];
-		sf::RectangleShape Wall_HitBox9[2];
-		sf::RectangleShape Wall_HitBox8[3];
-		sf::RectangleShape Wall_HitBox5[3];
-		sf::RectangleShape Wall_HitBox4[3];
-		sf::RectangleShape Wall_HitBox1;
+		sf::RectangleShape WallBottom[2];
+		sf::RectangleShape WallLeft[2];
+		sf::RectangleShape WallRight[2];
+		sf::RectangleShape WallTop[2];
+		
 									 //0	  1	 	 2		3
 		bool RoomGateway_Check[4] = {false, false, false, false};
 		/*
@@ -43,7 +43,7 @@ class WORLD
 				- 3 Left
 		*/
 		sf::Texture RoomTexture[15];
-		sf::Texture WallTexture[14];
+		sf::Texture WallTexture[11];
 
 		// มีการใช้หลายครั้งนะอย่าลืม
 		/*

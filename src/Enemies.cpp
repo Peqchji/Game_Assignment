@@ -145,6 +145,6 @@ void ENEMY::WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall)
                 }
             }
         }
-        i++;
+        ++i;
     }
 }
