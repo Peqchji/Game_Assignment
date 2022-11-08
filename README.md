@@ -15,7 +15,7 @@
 	🟡 Player Logic
 	🟢 Player class
 	🟢 Enemy Logic
-	🟡 Gun and Bullet logic
+	🟢 Gun and Bullet logic
 	🟡 Movement
 		🟢 player movement
 		🟡 Enemy
