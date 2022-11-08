@@ -28,12 +28,43 @@ ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
         this->Animation_CLK.restart(); 
     }
 }
+
+void ENEMY::update(float dt, sf::Vector2f playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox)
+{
+    this->Animation_Timer = this->Animation_CLK.getElapsedTime();
+    if(Animation_Timer.asMilliseconds() > 125)
+    {
+        EnemyAnimation = (EnemyAnimation + 1) % 4;
+        this->Animation_CLK.restart();
+    }
+    if(playerDetected(playerposi))
+    {
+        this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + 4 + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
+        NormalInteract(dt, playerposi, WallHitbox);
+    }
+    else
+        this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
+
+}
+
+bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage)
+{
+    bool isHit = false;
+    if(BulletCollision(Bullet, Amount_Bullet))
+    {
+        Enemy_Health -= ReceivedDamage;
+        isHit = true;
+    }
+    return isHit;
+}
+
+//Private
 void  ENEMY::setEnemyType()
 {
     EnemyType = 
   {
-    {"MiniDemon", EnemyAttribute(2.f, 15.f, 50.f, std::string("Normal") ,std::string("../content/Sprite/MiniDemon.png"))},
-    {"Splinter", EnemyAttribute(2.f, 1.f, 100.f, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))}
+    {"MiniDemon", EnemyAttribute(2.f, 15.f, 50.f, 100, std::string("Normal") ,std::string("../content/Sprite/MiniDemon.png"))},
+    {"Splinter", EnemyAttribute(2.f, 1.f, 100.f, 50, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))}
   };
 }
 
@@ -58,24 +89,6 @@ void ENEMY::NormalInteract(float delta_Time, sf::Vector2f &Player,  std::vector<
     WallCollision(Wall);
     this->EnemyCollisionHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
     this->EnemySprite.move(EnemyVelocity.x, EnemyVelocity.y);
-}
-
-void ENEMY::update(float dt, sf::Vector2f playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox)
-{
-    this->Animation_Timer = this->Animation_CLK.getElapsedTime();
-    if(Animation_Timer.asMilliseconds() > 125)
-    {
-        EnemyAnimation = (EnemyAnimation + 1) % 4;
-        this->Animation_CLK.restart();
-    }
-    if(playerDetected(playerposi))
-    {
-        this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + 4 + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
-        NormalInteract(dt, playerposi, WallHitbox);
-    }
-    else
-        this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
-
 }
 
 void ENEMY::WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall)
@@ -147,4 +160,18 @@ void ENEMY::WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall)
         }
         ++i;
     }
+}
+
+bool ENEMY::BulletCollision(sf::Sprite Bullet, int Amount_Bullet)
+{
+    int i = 0;
+    while(i <  Amount_Bullet)
+    {
+        if((Bullet.getGlobalBounds()).intersects(this->EnemySprite.getGlobalBounds()))
+        {
+            return true;
+        }
+        ++i;
+    }
+    return false;
 }

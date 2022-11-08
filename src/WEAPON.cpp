@@ -39,11 +39,13 @@ void WEAPON::shotingOut(std::string &Type, float dir_x, float dir_y, std::vector
   bool NormalShot = (Type.compare("Pistol") == 0 || Type.compare("Desert Eagle") == 0 || Type.compare("AK-47") == 0);
   bool SplitShot = (Type.compare("Shotgun") == 0);
   if(NormalShot)
-    bullets.push_back(new BULLET(this->bulletGenPosi.x, this->bulletGenPosi.y, dir_x, dir_y, 350.f));
+    bullets.push_back(new BULLET(this->bulletGenPosi.x, this->bulletGenPosi.y, dir_x, dir_y, this->Dealing_Damge, 350.f));
   else if(SplitShot)
     for(int i = -2; i < 3; i++)
     {
-      bullets.push_back(new BULLET(this->bulletGenPosi.x + i*3, this->bulletGenPosi.y - i*((dir_x < 0 && dir_y > 0) || (dir_y < 0 && dir_x > 0)? -3:3), dir_x, dir_y, 350.f - abs(i)*25));
+      double radius = 5 * i * 3.14159265/180;
+      //bullets.push_back(new BULLET(this->bulletGenPosi.x + i*3, this->bulletGenPosi.y - i*((dir_x < 0 && dir_y > 0) || (dir_y < 0 && dir_x > 0)? -3:3), dir_x, dir_y, this->Dealing_Damge, 350.f - abs(i)*25));
+      bullets.push_back(new BULLET(this->bulletGenPosi.x , this->bulletGenPosi.y, (dir_x * cos(radius) - dir_y * sin(radius)), sin(radius) * dir_x + cos(radius)*dir_y, this->Dealing_Damge, 350.f));
     }
 }
 
@@ -51,11 +53,11 @@ void WEAPON::setGunType()
 {
     GunType = 
   {
-    {"Pistol", GunAttribute(4, 0, 0, 3, sf::Vector2f(7.f, -4.f), sf::Vector2f(4.f, 6.f), "../content/Pistol.png")},
-    {"Desert Eagle", GunAttribute(4, 1, 10, 2.7, sf::Vector2f(6.f, -3.f), sf::Vector2f(4.f, 6.f), "../content/Desert_Eagle.png")},
-    {"AK-47", GunAttribute(3, 1, 12, 6, sf::Vector2f(25.f, -7.f), sf::Vector2f(6.f, 9.f), "../content/AK-47.png")},
+    {"Pistol", GunAttribute(4, 0, 0, 3, sf::Vector2f(7.f, -4.f), sf::Vector2f(4.f, 6.f), "../content/Gun/Sprite/Pistol.png")},
+    {"Desert Eagle", GunAttribute(4, 1, 10, 2.7, sf::Vector2f(6.f, -3.f), sf::Vector2f(4.f, 6.f), "../content/Gun/Sprite/Desert_Eagle.png")},
+    {"AK-47", GunAttribute(3, 1, 12, 6, sf::Vector2f(25.f, -7.f), sf::Vector2f(6.f, 9.f), "../content/Gun/Sprite/AK-47.png")},
     //{"Assault Rifle Elite", GunAttribute(2, 1, 5, 8, , )},
-    {"Shotgun", GunAttribute(3, 3, 0, 1.2, sf::Vector2f(25.f, -6.f), sf::Vector2f(8.f, 8.f), "../content/Shotgun.png")},
+    {"Shotgun", GunAttribute(3, 3, 0, 1.2, sf::Vector2f(25.f, -6.f), sf::Vector2f(8.f, 8.f), "../content/Gun/Sprite/Shotgun.png")},
     //{"Tactical Shotgun", GunAttribute(12, 3, 5, 2, , )},
     //{"Gatling Gun", GunAttribute(2, 2, 0, 10, , )}*/
   };

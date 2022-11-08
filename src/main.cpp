@@ -11,13 +11,18 @@ int main()
     int gameState = 0;
     sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Titlebar | sf::Style::Close);
     sf::View view;
-    switch(gameState)
+    while(window.isOpen())
     {
-        case 0:
-        Gameplay(window, view);
-            break;
-        default:
-            break;
+        switch(gameState)
+        {
+            case 0:
+                Gameplay(window, view);
+                gameState += 1;
+                break;
+            default:
+                window.close();
+                break;
+        }
     }
     return 0;
 }
@@ -25,7 +30,7 @@ int main()
 int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
-    short RoomIn_A_Map = 9;
+    short RoomIn_A_Map = 5;
     bool InGame = true;
 
     int current_PlayerPosi_RoomID;
@@ -101,7 +106,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
 
     //##GAME LOOP##
-    while (window.isOpen())
+    while (InGame)
     {
         // Pre-Update
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
@@ -121,11 +126,11 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 switch(ev.type)
                 {
                     case sf::Event::Closed :
-                        window.close();
+                        InGame = false;
                         break;
                     case sf::Event::KeyPressed :
                         if(ev.key.code == sf::Keyboard::Escape)
-                            window.close();
+                            InGame = false;
                         if(ev.key.code == sf::Keyboard::P)
                         {
                             currentGun = (currentGun+1) % weapon[0].GunType.size();
@@ -246,6 +251,27 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
             gui.update(playerPosi.x, playerPosi.y, player.current_Health, player.current_Energy, player.player_Health, player.player_Energy, player.player_Crit_Chance);
+            for(auto *Enemy: Enemies)
+            {
+                auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);
+                if(it_enemy != Enemies.end())
+                {
+                    for(auto *bullet: bullets)
+                    {
+                        auto it = std::find(bullets.begin(), bullets.end(), bullet);
+                        if(it != bullets.end())
+                        {
+                            if(Enemy->getHitted(bullet->bulletShape , bullets.size(), bullet->bulletDamage))
+                                bullets.erase(it);
+                        }
+                    }
+
+                    if(Enemy->Enemy_Health <= 0)
+                    {
+                       Enemies.erase(it_enemy);
+                    }
+                }
+            }
 
         //##Render##
         // clear old frame before render new one

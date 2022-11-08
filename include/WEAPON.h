@@ -8,7 +8,7 @@ class WEAPON
     public:
          struct GunAttribute
         {
-            short Damage;
+            float Damage;
             float RoundPerSec;
             short EnergyCost;
             short CritChance;
@@ -17,7 +17,7 @@ class WEAPON
             sf::Vector2f Holding;
             sf::Texture Texture;
 
-            GunAttribute(short _Damage, short _EnergyCost, short _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture)
+            GunAttribute(float _Damage, short _EnergyCost, short _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture)
             {
                 Damage = _Damage;
                 EnergyCost = _EnergyCost;
@@ -29,7 +29,7 @@ class WEAPON
             }
         };
 
-        short Dealing_Damge;
+        float Dealing_Damge;
         float FireRate;
         short Cost;
         short Crit;

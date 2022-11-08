@@ -10,11 +10,11 @@ class BULLET
         double rotate_By;
         short AimDirRotate;
 
-        float bulletDamage;
     public:
+        float bulletDamage;
         sf::Sprite bulletShape;
         BULLET();
-        BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float Speed);
+        BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float damage, float Speed);
 
         bool bulletCollision(std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
         bool bulletLifeTime();
