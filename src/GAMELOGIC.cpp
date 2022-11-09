@@ -47,3 +47,9 @@ void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, floa
         Enemies.push_back(new ENEMY("MiniDemon", init_Posi_x, init_Posi_y) );
     }
 }
+
+void GAMELOGIC::SpawnPortal(float grid_x, float grid_y)
+{
+    float init_x = (grid_x + 0.5) * ::GridPixelSize;
+    float init_y = (grid_y + 0.5) * ::GridPixelSize;
+}

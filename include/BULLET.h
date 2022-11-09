@@ -10,6 +10,11 @@ class BULLET
         double rotate_By;
         short AimDirRotate;
 
+        int bulletFrame;
+        sf::Clock AnimationCLK;
+        sf::Time AnimationTimer;
+        sf::Vector2f Spritesize;
+
     public:
         float bulletDamage;
         sf::Sprite bulletShape;

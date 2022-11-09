@@ -26,7 +26,7 @@ void WEAPON::init_Gun(std::string &Type, float playerPosi_x, float playerPosi_y)
 void WEAPON::update(float Posi_x, float Posi_y, float dir_x, float dir_y)
 {
    short Direction = (dir_x > 0? 1: -1);
-    this->GunModel.setPosition(Posi_x - Direction, Posi_y - (dir_x > 0? 6:5));
+    this->GunModel.setPosition(Posi_x - Direction, Posi_y - 5);
     this->GunModel.setTextureRect(sf::IntRect(0, (dir_x > 0? 0: 1) * GunTexture.getSize().y, GunTexture.getSize().x, Direction * GunTexture.getSize().y));
     rotate_Gun_By = ((static_cast<double>(atan(-dir_x/dir_y)) * 180)/3.141592654) + (dir_y > 0? 180:0) - 90;
     this->GunModel.setRotation(rotate_Gun_By);
@@ -39,13 +39,13 @@ void WEAPON::shotingOut(std::string &Type, float dir_x, float dir_y, std::vector
   bool NormalShot = (Type.compare("Pistol") == 0 || Type.compare("Desert Eagle") == 0 || Type.compare("AK-47") == 0);
   bool SplitShot = (Type.compare("Shotgun") == 0);
   if(NormalShot)
-    bullets.push_back(new BULLET(this->bulletGenPosi.x, this->bulletGenPosi.y, dir_x, dir_y, this->Dealing_Damge, 350.f));
+    bullets.push_back(new BULLET(this->bulletGenPosi.x, this->bulletGenPosi.y, dir_x, dir_y, this->Dealing_Damge, 250.f));
   else if(SplitShot)
     for(int i = -2; i < 3; i++)
     {
       double radius = 5 * i * 3.14159265/180;
       //bullets.push_back(new BULLET(this->bulletGenPosi.x + i*3, this->bulletGenPosi.y - i*((dir_x < 0 && dir_y > 0) || (dir_y < 0 && dir_x > 0)? -3:3), dir_x, dir_y, this->Dealing_Damge, 350.f - abs(i)*25));
-      bullets.push_back(new BULLET(this->bulletGenPosi.x , this->bulletGenPosi.y, (dir_x * cos(radius) - dir_y * sin(radius)), sin(radius) * dir_x + cos(radius)*dir_y, this->Dealing_Damge, 350.f));
+      bullets.push_back(new BULLET(this->bulletGenPosi.x , this->bulletGenPosi.y, (dir_x * cos(radius) - dir_y * sin(radius)), sin(radius) * dir_x + cos(radius)*dir_y, this->Dealing_Damge, 250.f));
     }
 }
 

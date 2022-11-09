@@ -3,6 +3,7 @@
 
 #include <MASTER.h>
 #include <ENEMY.h>
+#include <Portal.h>
 
 class GAMELOGIC
 {
@@ -10,6 +11,7 @@ class GAMELOGIC
         std::vector<std::string> roomType;
         void RandomRoomType(int AMOUNT_Room);
         void SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies,  float SpawnPosi_x, float SpawnPosi_y);
+        void SpawnPortal(float grid_x, float grid_y);
 };
 
 #endif

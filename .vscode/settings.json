@@ -54,5 +54,6 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "list": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/include/SFML/Audio"
 }

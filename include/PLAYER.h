@@ -37,17 +37,14 @@ class PLAYER{
         float current_Crit_Chance;
         std::string player_Skill;
 
-
-        sf::Texture PlayerTexture;
         sf::Vector2f velocity;
 
         sf::RectangleShape collisionHitbox;
         sf::RectangleShape CharModel;
+        sf::RectangleShape Hitbox;
         
-        sf::Vector2f textureSize;
-        int currentAnimation;
 
-        void setPlayer_attribute();
+        void setPlayer_attribute(std::string Type);
         void setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y);
         void setZeroVelocity();
         void update(float dir_x);
@@ -57,6 +54,9 @@ class PLAYER{
         std::map<std::string, struct PlayerClassAttibute> PlayerClass;
         sf::Clock Animation_CLK;
         sf::Time Animation_Timer;
+        sf::Texture PlayerTexture;
+        int currentAnimation;
+        sf::Vector2f textureSize;
         void setPlayerClass();
 };
 #endif
