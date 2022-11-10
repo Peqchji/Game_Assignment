@@ -40,18 +40,22 @@ class ENEMY
         bool Hitting(sf::RectangleShape playerHitbox);
 
         void AntiOverlap(sf::RectangleShape OtherEntity);
-        sf::RectangleShape EnemyCollisionHitbox;
+        sf::RectangleShape EnemyHitbox;
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
+
         sf::Clock Animation_CLK;
         sf::Time Animation_Timer;
+        sf::Clock ZigzagCLK;
+        sf::Time ZigzagTimer;
 
         sf::Vector2f EnemyVelocity;
-        sf::RectangleShape EnemyHitbox;
+
 
         std::string EntityType;
         std::string behaviour;
 
+        sf::RectangleShape EnemyCollisionHitbox;
         sf::Texture EnemyTexture;
         sf::Vector2f TextureSize;
 

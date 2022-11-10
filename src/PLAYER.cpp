@@ -17,9 +17,9 @@ void PLAYER::setPlayer_attribute(std::string Type)
 		this->Hitbox.setOrigin(sf::Vector2f((::CellPixelSize - 7)/2.f, ::CellPixelSize/4.f));
 
    		// Virsual the Hitbox
-   		this->Hitbox.setFillColor(sf::Color::Transparent);
+   		/*this->Hitbox.setFillColor(sf::Color::Transparent);
    		this->Hitbox.setOutlineColor(sf::Color::Red);
-   		this->Hitbox.setOutlineThickness(1.f);
+   		this->Hitbox.setOutlineThickness(1.f);*/
 
    		//Load Texture
    		this->PlayerTexture.loadFromFile(it->second.texture);
@@ -49,7 +49,7 @@ void PLAYER::setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y)
 {
    this->collisionHitbox.setPosition(SpawnPoint_x, SpawnPoint_y);
    this->CharModel.setPosition(SpawnPoint_x, SpawnPoint_y - 8);
-   this->Hitbox.setPosition(SpawnPoint_x, SpawnPoint_y - 8);
+   this->Hitbox.setPosition(SpawnPoint_x, SpawnPoint_y - 5);
 }
 
 void PLAYER::update(float dir_x)

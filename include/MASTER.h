@@ -27,5 +27,4 @@ const float ScreenWidth = ScreenScale * 16;
 const float ScreenHeight = ScreenScale * 9;
 const float movementSpeed = 240/ScaleUp;
 
-
 #endif

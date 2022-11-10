@@ -26,12 +26,12 @@ void WEAPON::init_Gun(std::string &Type, float playerPosi_x, float playerPosi_y)
 void WEAPON::update(float Posi_x, float Posi_y, float dir_x, float dir_y)
 {
    short Direction = (dir_x > 0? 1: -1);
-    this->GunModel.setPosition(Posi_x - Direction, Posi_y - 5);
+    this->GunModel.setPosition(Posi_x - Direction, Posi_y - (dir_x > 0? 6: 5));
     this->GunModel.setTextureRect(sf::IntRect(0, (dir_x > 0? 0: 1) * GunTexture.getSize().y, GunTexture.getSize().x, Direction * GunTexture.getSize().y));
-    rotate_Gun_By = ((static_cast<double>(atan(-dir_x/dir_y)) * 180)/3.141592654) + (dir_y > 0? 180:0) - 90;
+    rotate_Gun_By = ((static_cast<double>(atan(-dir_x/dir_y)) * 180)/3.14159265) + (dir_y > 0? 180:0) - 90;
     this->GunModel.setRotation(rotate_Gun_By);
     this->bulletGenPosi.x = GunModel.getPosition().x + (MuzzelPoint.x * dir_x * scaledown_sprite);
-    this->bulletGenPosi.y = GunModel.getPosition().y + (MuzzelPoint.x * dir_y * scaledown_sprite);
+    this->bulletGenPosi.y = GunModel.getPosition().y + (MuzzelPoint.x * dir_y * scaledown_sprite) - (dir_x > 0? 0:2);
 }
 
 void WEAPON::shotingOut(std::string &Type, float dir_x, float dir_y, std::vector<BULLET*> &bullets)
