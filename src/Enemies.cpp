@@ -35,6 +35,7 @@ ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
 
         this->Animation_CLK.restart(); 
         this->ZigzagCLK.restart();
+        this->KnockbackCLK.restart();
     }
 }
 
@@ -86,6 +87,20 @@ void  ENEMY::setEnemyType()
   };
 }
 
+void ENEMY::Move(float velocity_x, float velocity_y)
+{
+    this->EnemySprite.move(velocity_x, velocity_y);
+    this->EnemyCollisionHitbox.move(velocity_x, velocity_y);
+    this->EnemyHitbox.move(velocity_x, velocity_y);
+}
+
+void ENEMY::setPosition(float Posi_x, float Posi_y)
+{
+    this->EnemySprite.setPosition(Posi_x, Posi_y);
+    this->EnemyCollisionHitbox.setPosition(Posi_x, Posi_y);
+    this->EnemyHitbox.setPosition(Posi_x, Posi_y);
+}
+
 bool ENEMY::playerDetected(sf::Vector2f playerPosi)
 {
     double distance;
@@ -118,9 +133,7 @@ void ENEMY::NormalInteract(float delta_Time, sf::Vector2f &Player,  std::vector<
 {
     EnemyVelocity = dir_normal * Enemy_Speed * delta_Time;
     WallCollision(Wall);
-    this->EnemyCollisionHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
-    this->EnemyHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
-    this->EnemySprite.move(EnemyVelocity.x, EnemyVelocity.y);
+    Move(EnemyVelocity.x, EnemyVelocity.y);
 }
 
 void ENEMY::ZigzagInteract(float delta_Time, sf::Vector2f &Player,  std::vector<std::vector<sf::RectangleShape>> Wall)
@@ -130,9 +143,7 @@ void ENEMY::ZigzagInteract(float delta_Time, sf::Vector2f &Player,  std::vector<
     this->EnemyVelocity.x = static_cast<float>((dir_normal.x + (dir_normal.y * radius)) * Enemy_Speed * delta_Time);
     this->EnemyVelocity.y = static_cast<float>((dir_normal.y + (dir_normal.x * radius)) * Enemy_Speed * delta_Time);
     WallCollision(Wall);
-    this->EnemyCollisionHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
-    this->EnemyHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
-    this->EnemySprite.move(EnemyVelocity.x, EnemyVelocity.y);
+    Move(EnemyVelocity.x, EnemyVelocity.y);
 }
 
 void ENEMY::WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall)
@@ -149,64 +160,42 @@ void ENEMY::WallCollision(std::vector<std::vector<sf::RectangleShape>> Wall)
         WallBound = element.getGlobalBounds();
         if(WallBound.intersects(nextPos))
         {
-            EnemyBound = this->EnemyCollisionHitbox.getGlobalBounds();
-            nextPos = EnemyBound;
-            nextPos.left += this->EnemyVelocity.x;
-            nextPos.top += this->EnemyVelocity.y;
-            WallBound = element.getGlobalBounds();
-            if(WallBound.intersects(nextPos))
+            //Top and Bottom collision
+            if(EnemyBound.top != WallBound.top 
+            && (EnemyBound.top + EnemyBound.height) != WallBound.top + WallBound.height 
+            && EnemyBound.left < WallBound.left + WallBound.width 
+            && EnemyBound.left + EnemyBound.width > WallBound.left)
             {
-                //Top and Bottom collision
-                if(EnemyBound.top != WallBound.top 
-                && (EnemyBound.top + EnemyBound.height) != WallBound.top + WallBound.height 
-                && EnemyBound.left < WallBound.left + WallBound.width 
-                && EnemyBound.left + EnemyBound.width > WallBound.left)
-                {
-                    float slideDIR = (EnemyBound.top > WallBound.top? 1:-1) * this->EnemyVelocity.y;
-
-                    if(EnemyBound.left + EnemyBound.width*0.1 < WallBound.left
-				    && EnemyBound.left < WallBound.left)
-				    {
-				    	this->EnemySprite.move(-this->EnemyVelocity.x + slideDIR, 0);
-      			    	this->EnemyCollisionHitbox.move(-this->EnemyVelocity.x + slideDIR, 0);
-                        this->EnemyHitbox.move(-this->EnemyVelocity.x + slideDIR, 0);
-				    }
-				    else if(EnemyBound.left + EnemyBound.width*0.9 > WallBound.width + WallBound.width
-				    && EnemyBound.left + EnemyBound.width > WallBound.left + WallBound.width)
-				    {
-				    	this->EnemySprite.move(-this->EnemyVelocity.x - slideDIR, 0);
-      			    	this->EnemyCollisionHitbox.move(-this->EnemyVelocity.x - slideDIR, 0);
-                        this->EnemyHitbox.move(-this->EnemyVelocity.x - slideDIR, 0);
-				    }
-                    this->EnemySprite.move(0, -(this->EnemyVelocity.y));
-                    this->EnemyCollisionHitbox.move(0, -(this->EnemyVelocity.y));
-                    this->EnemyHitbox.move(0, -(this->EnemyVelocity.y));
+                Move(0, -(this->EnemyVelocity.y));
+                float slideDIR = (EnemyBound.top > WallBound.top? 1:-1) * this->EnemyVelocity.y;
+                if(EnemyBound.left + EnemyBound.width*0.1 < WallBound.left
+			    && EnemyBound.left < WallBound.left)
+			    {
+			    	Move(-this->EnemyVelocity.x + slideDIR, 0);
                 }
-                //Right collision
-                if(EnemyBound.left != WallBound.left 
-                && (EnemyBound.left + EnemyBound.width) != (WallBound.left + WallBound.width )
-                && (EnemyBound.top < WallBound.top + WallBound.height)
-                && EnemyBound.top + EnemyBound.height > WallBound.top)
-                {
-                    float slideDIR = (EnemyBound.left + EnemyBound.width*0.5 > WallBound.left + WallBound.width? 1:-1) * this->EnemyVelocity.x;
-
-                    if(EnemyBound.top + EnemyBound.height*0.1 < WallBound.top
-				    && EnemyBound.top < WallBound.top)
-				    {
-				    	this->EnemySprite.move(0, -this->EnemyVelocity.y + slideDIR);
-      			    	this->EnemyCollisionHitbox.move(0, -this->EnemyVelocity.y + slideDIR);
-                        this->EnemyHitbox.move(0, -this->EnemyVelocity.y + slideDIR);
-				    }
-				    else if(EnemyBound.top + EnemyBound.height*0.9 > WallBound.top + WallBound.height
-				    && EnemyBound.top + EnemyBound.height > WallBound.top + WallBound.height)
-				    {
-				    	this->EnemySprite.move(0, -slideDIR - this->EnemyVelocity.y);
-      			    	this->EnemyCollisionHitbox.move(0, -slideDIR - this->EnemyVelocity.y);
-                        this->EnemyHitbox.move(0, -slideDIR - this->EnemyVelocity.y);
-				    }
-                    this->EnemySprite.move(-(this->EnemyVelocity.x), 0);
-                    this->EnemyCollisionHitbox.move(-(this->EnemyVelocity.x), 0);
-                    this->EnemyHitbox.move(-(this->EnemyVelocity.x), 0);
+			    else if(EnemyBound.left + EnemyBound.width*0.9 > WallBound.left + WallBound.width
+			    && EnemyBound.left + EnemyBound.width > WallBound.left + WallBound.width)
+			    {
+			    	Move(-this->EnemyVelocity.x - slideDIR, 0);
+			    }
+            }
+            //Right collision
+            if(EnemyBound.left != WallBound.left 
+            && (EnemyBound.left + EnemyBound.width) != (WallBound.left + WallBound.width )
+            && (EnemyBound.top < WallBound.top + WallBound.height)
+            && EnemyBound.top + EnemyBound.height > WallBound.top)
+            {
+                Move(-this->EnemyVelocity.x, 0);
+                float slideDIR = (EnemyBound.left + EnemyBound.width*0.5 > WallBound.left + WallBound.width? 1:-1) * this->EnemyVelocity.x;
+                if(EnemyBound.top + EnemyBound.height*0.1 < WallBound.top
+                && EnemyBound.top < WallBound.top)
+			    {
+			    	Move(0, -this->EnemyVelocity.y + slideDIR);
+			    }
+			    else if(EnemyBound.top + EnemyBound.height*0.9 > WallBound.top + WallBound.height 
+                && EnemyBound.top + EnemyBound.height > WallBound.top + WallBound.height)
+			    {
+			    	Move(0,-this->EnemyVelocity.y - slideDIR);
                 }
             }
         }
@@ -227,12 +216,12 @@ bool ENEMY::BulletCollision(sf::Sprite Bullet, int Amount_Bullet)
     return false;
 }
 
-void ENEMY::AntiOverlap(sf::RectangleShape OtherEntity)
+/*void ENEMY::AntiOverlap(sf::RectangleShape &OtherEntity)
 {
     sf::FloatRect nextPos;
 	sf::FloatRect EntityBound;
 	sf::FloatRect EnemyBound;
-    EnemyBound = this->EnemyHitbox.getGlobalBounds();
+    EnemyBound = this->EnemyCollisionHitbox.getGlobalBounds();
     nextPos = EnemyBound;
     nextPos.left += this->EnemyVelocity.x;
     nextPos.top += this->EnemyVelocity.y;
@@ -245,9 +234,7 @@ void ENEMY::AntiOverlap(sf::RectangleShape OtherEntity)
         && EnemyBound.left < EntityBound.left + EntityBound.width 
         && EnemyBound.left + EnemyBound.width > EntityBound.left)
         {
-            this->EnemySprite.move(0, static_cast<float>(-(sqrt(2)*this->EnemyVelocity.y)));
-            this->EnemyCollisionHitbox.move(0, -static_cast<float>(sqrt(2)*this->EnemyVelocity.y));
-            this->EnemyHitbox.move(0, -static_cast<float>(sqrt(2)*this->EnemyVelocity.y));
+           Move(0, static_cast<float>(-this->EnemyVelocity.y));
         }
         //Right collision
         if(EnemyBound.left != EntityBound.left 
@@ -255,9 +242,24 @@ void ENEMY::AntiOverlap(sf::RectangleShape OtherEntity)
         && (EnemyBound.top < EntityBound.top + EntityBound.height)
         && EnemyBound.top + EnemyBound.height > EntityBound.top)
         {
-            this->EnemySprite.move(-static_cast<float>(sqrt(2)*this->EnemyVelocity.x), 0);
-            this->EnemyCollisionHitbox.move(-static_cast<float>(sqrt(2)*this->EnemyVelocity.x), 0);
-            this->EnemyHitbox.move(-static_cast<float>(sqrt(2)*this->EnemyVelocity.x), 0);
+            Move(static_cast<float>(-(this->EnemyVelocity.y)), 0);
         }
+    }
+}*/
+
+void ENEMY::Hitting(sf::RectangleShape playerHitbox, float &player_health)
+{
+    if((playerHitbox.getGlobalBounds()).intersects(this->EnemyHitbox.getGlobalBounds()))
+    {
+        if(!knockbacking)
+        {
+            player_health -= Enemy_damage;
+            Move(-1*EnemyVelocity.x, -1*EnemyVelocity.y);
+        }
+        knockbacking = true;
+    }
+    else
+    {
+        knockbacking = false;
     }
 }

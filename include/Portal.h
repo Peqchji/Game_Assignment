@@ -10,7 +10,7 @@ class Portal
         sf::Sprite PortalOut;
 
         Portal();
-        void update(float dt);
+        void update();
         void setupPortal(float spawn_x, float spawn_y, float portal_x, float portal_y);
 
         bool isPlayerNearPortalOut(sf::Vector2f playerPosi);

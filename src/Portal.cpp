@@ -15,7 +15,7 @@ Portal:: Portal()
     this->AnimationCLK.restart();
 }
 
-void Portal::update(float dt)
+void Portal::update()
 {
     this->AnimationTimer = this->AnimationCLK.getElapsedTime();
     if(this->AnimationTimer.asMilliseconds() > 94)

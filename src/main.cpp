@@ -244,7 +244,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         }
     
         //##UPDATE movement LOGIC##
-            portal.update(dt);
+            portal.update();
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.update(AimDir.x);
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
@@ -259,8 +259,9 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     {
                         score += Enemy->Enemy_Score;
                         printf("score: %d", score);
-                       Enemies.erase(it_enemy);
+                        Enemies.erase(it_enemy);
                     }
+                    //Enemy->Hitting(player.Hitbox, player.current_Health);
                     for(auto *bullet: bullets)
                     {
                         auto it = std::find(bullets.begin(), bullets.end(), bullet);
@@ -274,18 +275,18 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         }
                     }
                     Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
-                    for(auto *otherEntity: Enemies)
+                    /*for(auto *otherEntity: Enemies)
                     {
                         auto it_Entity = std::find(Enemies.begin(), Enemies.end(), otherEntity);
-                        if (it_enemy == it_Entity)
-                        {
-                            continue;
-                        }
                         if(it_Entity != Enemies.end())
                         {
-                            Enemy->AntiOverlap(otherEntity->EnemyHitbox);
+                            if(it_enemy == it_Entity)
+                            {
+                                continue;
+                            }
+                            Enemy->AntiOverlap(otherEntity->EnemyCollisionHitbox);   
                         }
-                    }
+                    }*/
                 }
             }
 
