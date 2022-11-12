@@ -3,8 +3,8 @@ void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
 {
     int i;
     int room_id;
-    int Amount_ChestRoom = (AMOUNT_Room + 1) / 3;
     int chestroomCreated = 0;
+    Amount_ChestRoom = (AMOUNT_Room + 1) / 3;
 
     roomType.clear();
     roomType.push_back(std::string("SpawnRoom"));
@@ -46,4 +46,14 @@ void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies, floa
         init_Posi_y = (SpawnGrid_y * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));
         Enemies.push_back(new ENEMY("MiniDemon", init_Posi_x, init_Posi_y) );
     }
+}
+
+void GAMELOGIC::SpawnChest(std::vector<CHEST*> &Chest, short SpawnGrid_x, short SpawnGrid_y)
+{
+    float init_Posi_x;
+    float init_Posi_y;
+    init_Posi_x = static_cast<float>(SpawnGrid_x * ::GridPixelSize) + (::CellPixelSize * 16.5);
+    init_Posi_y = static_cast<float>(SpawnGrid_y * ::GridPixelSize) + (::CellPixelSize * 16.5);
+    printf("init %f, %f\n", init_Posi_x, init_Posi_y);
+    Chest.push_back(new CHEST(init_Posi_x, init_Posi_y) );
 }

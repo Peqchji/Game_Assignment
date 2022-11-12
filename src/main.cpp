@@ -31,6 +31,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 {
     int x, y, i;
     short RoomIn_A_Map = 5;
+    short RoomCleared = 0;
     bool InGame = true;
     int score = 0;
 
@@ -38,15 +39,16 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     int room_id;
 
     WORLD world;
-    Portal portal;
     GAMELOGIC gameLogic;
-    GUI gui;
 
     PLAYER player;
     std::vector<ENEMY*> Enemies;
-
+    std::vector<CHEST*> Chests;
     std::vector<BULLET*> bullets;
+    Portal portal;
     WEAPON weapon[2];
+
+    GUI gui;
     
     //Timer
     sf::Clock Timer_FireRate;
@@ -61,6 +63,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     //##Setup Window##
     window.setFramerateLimit(setFPS);
+    /*sf::ContextSettings Setting;
+    Setting.antialiasingLevel = 16;*/
 
     //Setup Icon
     sf::Image icon;
@@ -98,7 +102,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     weapon[0].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
 
-    for(i = 0; i < RoomIn_A_Map ; i++)
+    for(i = 0; i < RoomIn_A_Map + 1; i++)
     {
         if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
         {
@@ -108,20 +112,17 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     portal.setupPortal(world.Field_Posi[0].Grid_col, world.Field_Posi[0].Grid_row, world.Field_Posi[RoomIn_A_Map].Grid_col, world.Field_Posi[RoomIn_A_Map].Grid_row);
 
+    for(i = 0; i < RoomIn_A_Map + 1 ; i++)
+    {
+        if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+        {
+            printf("bruh: %d: %d, %d\n", i, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+            gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+        }
+    }
     //##GAME LOOP##
     while (InGame)
     {
-        // Pre-Update
-        playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
-        current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
-        player.setZeroVelocity();
-
-        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
-        AimDir = mousePosi - MiddleOfWin;
-        AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
-
-        dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
-        bullet_Timer = Timer_FireRate.getElapsedTime();
 
         //event
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
@@ -129,8 +130,10 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         {
             switch(ev.type)
             {
-                case sf::Event::Closed :
+                case sf::Event::Closed:
                     InGame = false;
+                    break;
+                case sf::Event::LostFocus:
                     break;
                 case sf::Event::KeyPressed:
                     if(ev.key.code == sf::Keyboard::Escape)
@@ -144,10 +147,22 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         gunType = key->first;
                         weapon[0].init_Gun(gunType, playerPosi.x, playerPosi.y);
                     }
+                    break;
                 default:
                     break;
             }
         }
+        // Pre-Update
+        playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
+        current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
+        player.setZeroVelocity();
+
+        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
+        AimDir = mousePosi - MiddleOfWin;
+        AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
+
+        dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
+        bullet_Timer = Timer_FireRate.getElapsedTime();
 
         //## GAME LOGIC process ##
         // Input Handle
@@ -159,44 +174,61 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
             printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
         }
-        if(sf::Keyboard::isKeyPressed (sf::Keyboard::R))
+        if(current_PlayerPosi_RoomID == RoomIn_A_Map)
         {
-            world.AllClear();
-            world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
-            world.SetupMAP();
-            world.SetupRoom(RoomIn_A_Map);
-            gameLogic.RandomRoomType(RoomIn_A_Map);
-            Enemies.clear();
-            for(i = 0; i < RoomIn_A_Map ; i++)
+            if(portal.isPlayerNearPortalOut(player.Hitbox.getPosition()))
             {
-                if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                world.AllClear();
+                RoomCleared = (RoomCleared + 1) % 3;
+                if(RoomCleared == 2 && RoomIn_A_Map < 11)
                 {
-                    gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                    RoomIn_A_Map += 1;
                 }
-            }
-            view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
-            player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-            printf("\nNew MAP Created\n");
-            for (y = 0; y < 9; y++)//row
-            {
-                for(x = 0; x <9; x++)//col
+                world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
+                world.SetupMAP();
+                world.SetupRoom(RoomIn_A_Map);
+                gameLogic.RandomRoomType(RoomIn_A_Map);
+                Enemies.clear();
+                Chests.clear();
+                for(i = 0; i < RoomIn_A_Map ; i++)
                 {
-                    std::cout << world.MAP_MATRIX[y][x] << " ";
+                    if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                    {
+                        gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                    }
                 }
-                std::cout << std::endl;
-            }
-            for(i = 0; i < RoomIn_A_Map + 1; i++)
-            {
-                std::cout << gameLogic.roomType[i] ;
-                std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
+                view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                printf("\nNew MAP Created\n");
+                for (y = 0; y < 9; y++)//row
+                {
+                    for(x = 0; x <9; x++)//col
+                    {
+                        std::cout << world.MAP_MATRIX[y][x] << " ";
+                    }
+                    std::cout << std::endl;
+                }
+                for(i = 0; i < RoomIn_A_Map + 1; i++)
+                {
+                    std::cout << gameLogic.roomType[i] ;
+                    std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
+                    std :: cout << std::endl;
+                }
                 std :: cout << std::endl;
+                    portal.setupPortal(world.Field_Posi[0].Grid_col, world.Field_Posi[0].Grid_row, world.Field_Posi[RoomIn_A_Map].Grid_col, world.Field_Posi[RoomIn_A_Map].Grid_row);
+                for(i = 0; i < RoomIn_A_Map + 1 ; i++)
+                {
+                    if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+                    {
+                        printf("bruh: %d: %d, %d\n", i, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                        gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                    }
+                }
             }
-            std :: cout << std::endl;
-                portal.setupPortal(world.Field_Posi[0].Grid_col, world.Field_Posi[0].Grid_row, world.Field_Posi[RoomIn_A_Map].Grid_col, world.Field_Posi[RoomIn_A_Map].Grid_row);
-        }
+        }   
         //////////////////////////////////////////////////////////////////////////////////
 
-        if(sf::Event::KeyPressed)
+        if((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||  sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
         {   
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
@@ -244,7 +276,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         }
     
         //##UPDATE movement LOGIC##
-            portal.update();
+            portal.update(dt);
             player.PlayerCollision(current_PlayerPosi_RoomID, world.Wall);
             player.update(AimDir.x);
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
@@ -255,44 +287,29 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);
                 if(it_enemy != Enemies.end())
                 {
+                    Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
                     if(Enemy->Enemy_Health <= 0)
                     {
                         score += Enemy->Enemy_Score;
                         printf("score: %d", score);
-                        Enemies.erase(it_enemy);
+                       Enemies.erase(it_enemy);
                     }
-                    //Enemy->Hitting(player.Hitbox, player.current_Health);
-                    for(auto *bullet: bullets)
+                    if(bullets.size() > 0)
                     {
-                        auto it = std::find(bullets.begin(), bullets.end(), bullet);
-                        if(it != bullets.end())
+                        for(auto *bullet: bullets)
                         {
-                            if(Enemy->getHitted(bullet->bulletShape , bullets.size(), bullet->bulletDamage) 
-                            || ((bullet->bulletCollision(world.Wall) || bullet->bulletLifeTime()) && bullets.size() > 0))
+                            auto it = std::find(bullets.begin(), bullets.end(), bullet);
+                            if(it != bullets.end())
                             {
-                                bullets.erase(it);
+                                if(Enemy->getHitted(bullet->bulletShape , bullets.size(), bullet->bulletDamage)
+                                || (bullet->bulletCollision(world.Wall) || bullet->bulletLifeTime()) )
+                                {
+                                    bullets.erase(it);
+                                }
                             }
                         }
                     }
-                    Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
-                    /*for(auto *otherEntity: Enemies)
-                    {
-                        auto it_Entity = std::find(Enemies.begin(), Enemies.end(), otherEntity);
-                        if(it_Entity != Enemies.end())
-                        {
-                            if(it_enemy == it_Entity)
-                            {
-                                continue;
-                            }
-                            Enemy->AntiOverlap(otherEntity->EnemyCollisionHitbox);   
-                        }
-                    }*/
                 }
-            }
-
-            if(current_PlayerPosi_RoomID == RoomIn_A_Map)
-            {
-                portal.isPlayerNearPortalOut(player.Hitbox.getPosition());
             }
         //##Render##
         // clear old frame before render new one
@@ -316,6 +333,25 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     window.draw(e_col);
                 }
             }
+
+            //Draw Chest
+            if(Chests.size() > 0)
+            {
+                for(i = 0; i < gameLogic.Amount_ChestRoom; i++)
+                {
+                    Chests[i]->update(player.Hitbox.getPosition());
+                    window.draw(Chests[i]->ChestSprite);
+                }
+                /*for(auto *e_chest: Chests)
+                {
+                    auto it_Chests= std::find(Chests.begin(), Chests.end(), e_chest);
+                    if(it_Chests != Chests.end())
+                    {
+                        e_chest->update(player.Hitbox.getPosition());
+                        window.draw(e_chest->ChestSprite);
+                    }
+                }*/
+            }
             //draw Portal
             window.draw(portal.PortalIn);
             window.draw(portal.PortalOut);
@@ -325,22 +361,26 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             window.draw(weapon[0].GunModel);
 
             //draw Enemies
-            for(auto *Enemy: Enemies)
+            if(Enemies.size() > 0)
             {
-                auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);
+                for(auto *Enemy: Enemies)
                 {
+                    auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);            
                     if(it_enemy != Enemies.end())
                     {
-                        window.draw(Enemy->EnemySprite);
-                        window.draw(Enemy->EnemyHitbox);
+                       window.draw(Enemy->EnemySprite);
                     }
+                    
                 }
             }
             //draw bullet
-            for(auto *bullet: bullets)
+            if(bullets.size() > 0)
             {
-                bullet->update(dt);
-                window.draw(bullet->bulletShape);
+                for(auto *bullet: bullets)
+                {
+                    bullet->update(dt);
+                    window.draw(bullet->bulletShape);
+                }
             }
 
             window.draw(gui.currentGUI);

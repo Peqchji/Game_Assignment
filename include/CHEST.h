@@ -6,10 +6,9 @@ class CHEST
 {
     public:
         sf::Sprite ChestSprite;
-        CHEST();
-        void update(float dt);
-        void setupChest(float spawn_x, float spawn_y, float portal_x, float portal_y);
-        bool isPlayerNearChest(sf::Vector2f playerPosi);
+        CHEST(float SpawnPos_x, float SpawnPos_y);
+        void update(sf::Vector2f playerPosi);
+        bool isPlayerOpenChest(sf::Vector2f playerPosi);
     private:
         sf::Texture Texture;
         sf::Vector2f TextureSize;
@@ -17,6 +16,8 @@ class CHEST
         sf::Clock AnimationCLK;
         sf::Time AnimationTimer;
         int currentAnimation;
+        
+        void setupChest(float spawn_x, float spawn_y);
 };
 
 #endif

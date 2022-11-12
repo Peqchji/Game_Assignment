@@ -4,14 +4,16 @@
 #include <MASTER.h>
 #include <ENEMY.h>
 #include <Portal.h>
-
+#include <CHEST.h>
 class GAMELOGIC
 {
     public:
         std::vector<std::string> roomType;
+        int Amount_ChestRoom;
         void RandomRoomType(int AMOUNT_Room);
         void SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies,  float SpawnPosi_x, float SpawnPosi_y);
-        void SpawnPortal(float SpawnGrid_x, float SpawnGrid_y, float LastGrid_x, float LastGrid_y);
+        void SpawnChest(std::vector<CHEST*> &Chest, short SpawnGrid_x, short SpawnGrid_y);
+
 };
 
 #endif

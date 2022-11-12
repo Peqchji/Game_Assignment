@@ -27,34 +27,25 @@ class ENEMY
         };
         sf::Vector2f Position;
         sf::Sprite EnemySprite;
-        sf::RectangleShape EnemyCollisionHitbox;
-        sf::RectangleShape EnemyHitbox;
 
         float Enemy_damage;
         float Enemy_Speed;
         float Enemy_Health;
         int Enemy_Score;
-
         ENEMY();
         ENEMY(std::string Type, float init_Posi_x, float init_Posi_y);
 
-        void update(float dt, short currentRoom, sf::Vector2f playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
+        void update(float &dt, short currentRoom, sf::Vector2f &playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
         bool getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage);
-        void Hitting(sf::RectangleShape playerHitbox, float &player_health);
+        bool Hitting(sf::RectangleShape playerHitbox);
 
-        void AntiOverlap(sf::RectangleShape &OtherEntity);
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
 
         sf::Clock Animation_CLK;
         sf::Time Animation_Timer;
-
         sf::Clock ZigzagCLK;
         sf::Time ZigzagTimer;
-
-        sf::Clock KnockbackCLK;
-        sf::Time KnockbackTimer;
-        bool knockbacking = false;
 
         sf::Vector2f EnemyVelocity;
 
@@ -62,6 +53,8 @@ class ENEMY
         std::string EntityType;
         std::string behaviour;
 
+        sf::RectangleShape EnemyCollisionHitbox;
+        sf::RectangleShape EnemyHitbox;
         sf::Texture EnemyTexture;
         sf::Vector2f TextureSize;
 
@@ -72,8 +65,6 @@ class ENEMY
         int EnemyAnimation;
 
         void setEnemyType();
-        void Move(float velocity_x, float velocity_y);
-        void setPosition(float Posi_x, float Posi_y);
 
         bool playerDetected(sf::Vector2f playerPosi);
         void NormalInteract(float delta_Time, sf::Vector2f &Player, std::vector<std::vector<sf::RectangleShape>> Wall);

@@ -8,6 +8,9 @@ Portal:: Portal()
     this->TextureSize.x = InTexture.getSize().x / 8;
     this->TextureSize.y = InTexture.getSize().y / 3;
 
+    this->PortalIn.setScale(1.5, 1);
+    this->PortalOut.setScale(1.5, 1);
+
     this->PortalIn.setOrigin(sf::Vector2f(TextureSize.x/2.f, TextureSize.y/2.f));
     this->PortalOut.setOrigin(sf::Vector2f(TextureSize.x/2.f, TextureSize.y/2.f));
     currentAnimation = 0;
@@ -15,7 +18,7 @@ Portal:: Portal()
     this->AnimationCLK.restart();
 }
 
-void Portal::update()
+void Portal::update(float dt)
 {
     this->AnimationTimer = this->AnimationCLK.getElapsedTime();
     if(this->AnimationTimer.asMilliseconds() > 94)
@@ -40,9 +43,8 @@ bool Portal::isPlayerNearPortalOut(sf::Vector2f playerPosi)
     // สมการวงรี
     // a = 1
     // b = 1.5
-    if(distance <= ::CellPixelSize)
+    if(distance <= ::CellPixelSize && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
-        printf("Yike\n");
         return true;
     }
     return false;
