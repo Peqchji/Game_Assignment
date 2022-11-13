@@ -60,7 +60,10 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
         }
     }
     else
+    {
+        ZigzagCLK.restart();
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
+    }
 
 }
 

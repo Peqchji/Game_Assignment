@@ -11,6 +11,7 @@ CHEST::CHEST(float SpawnPos_x, float SpawnPos_y)
     this->ChestSprite.setTextureRect(sf::IntRect(0, 0, TextureSize.x, TextureSize.y));
     currentAnimation = 0;
 
+    SpawnItem = false;
     this->AnimationCLK.restart();
     setupChest(SpawnPos_x, SpawnPos_y);
 }
@@ -26,6 +27,7 @@ void CHEST::update(sf::Vector2f playerPosi)
     else if(currentAnimation == 1 && AnimationTimer.asMilliseconds() >= 250)
     {
         currentAnimation = 2;
+        SpawnItem = true;
     }
     this->ChestSprite.setTextureRect(sf::IntRect(TextureSize.x * currentAnimation, 0, TextureSize.x, TextureSize.y));
 }

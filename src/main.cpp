@@ -4,6 +4,7 @@
 #include "GAMELOGIC.h"
 #include "WEAPON.h"
 #include "GUI.h"
+#include "ITEM.h"
 
 int Gameplay(sf::RenderWindow &window, sf::View &view);
 int main()
@@ -45,6 +46,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     std::vector<ENEMY*> Enemies;
     std::vector<CHEST*> Chests;
     std::vector<BULLET*> bullets;
+    std::vector<ITEM*> items;
     Portal portal;
     WEAPON weapon[2];
 
@@ -123,7 +125,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     //##GAME LOOP##
     while (InGame)
     {
-
         //event
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
         while(window.pollEvent(ev))
@@ -133,11 +134,13 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 case sf::Event::Closed:
                     InGame = false;
                     break;
-                case sf::Event::LostFocus:
-                    break;
+                /*case sf::Event::LostFocus:
+                    break;*/
                 case sf::Event::KeyPressed:
                     if(ev.key.code == sf::Keyboard::Escape)
-                        InGame = false;
+                    { 
+                       InGame = false;
+                    }
                     if(ev.key.code == sf::Keyboard::P)
                     {
                         currentGun = (currentGun+1) % weapon[0].GunType.size();
@@ -147,43 +150,32 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         gunType = key->first;
                         weapon[0].init_Gun(gunType, playerPosi.x, playerPosi.y);
                     }
+                    if(ev.key.code == (sf::Keyboard::Q))
+                    {
+                        Enemies.clear();
+                        printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
+                        printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
+                        printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
+                    }
                     break;
                 default:
                     break;
             }
         }
-        // Pre-Update
-        playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
-        current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
-        player.setZeroVelocity();
-
-        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
-        AimDir = mousePosi - MiddleOfWin;
-        AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
-
-        dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
-        bullet_Timer = Timer_FireRate.getElapsedTime();
 
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
-        if(sf::Keyboard::isKeyPressed (sf::Keyboard::Q))
-        {
-            Enemies.clear();
-            printf("\n%d:(%d, %d)\n",current_PlayerPosi_RoomID , world.Field_Posi[current_PlayerPosi_RoomID].Grid_row, world.Field_Posi[current_PlayerPosi_RoomID].Grid_col);
-            printf("%.0lf, %.0lf\n", playerPosi.y, playerPosi.x);
-            printf("%.2f %.2f | %.2f %.2f | %.2f %.2f\n", mousePosi.y, mousePosi.x, AimDir.x, AimDir.y, AimDir_Normal.x, AimDir_Normal.y);
-        }
         if(current_PlayerPosi_RoomID == RoomIn_A_Map)
         {
             if(portal.isPlayerNearPortalOut(player.Hitbox.getPosition()))
             {
-                world.AllClear();
                 RoomCleared = (RoomCleared + 1) % 3;
                 if(RoomCleared == 2 && RoomIn_A_Map < 11)
                 {
                     RoomIn_A_Map += 1;
                 }
+                world.AllClear();
                 world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
                 world.SetupMAP();
                 world.SetupRoom(RoomIn_A_Map);
@@ -227,6 +219,17 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             }
         }   
         //////////////////////////////////////////////////////////////////////////////////
+        // Pre-Update
+        playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
+        current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
+        player.setZeroVelocity();
+
+        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
+        AimDir = mousePosi - MiddleOfWin;
+        AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
+
+        dt = dt_clock.restart().asSeconds(); // เอาเวลาระหว่างเฟรม
+        bullet_Timer = Timer_FireRate.getElapsedTime();
 
         if((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||  sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
         {   
@@ -271,8 +274,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
          if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds() > weapon[0].FireRate && ((player.current_Energy - weapon[0].Cost) >= 0))
         {
             Timer_FireRate.restart();
-            weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, bullets);
-            player.current_Energy -= weapon[0].Cost;
+            weapon[0].shotingOut(gunType, AimDir_Normal.x, AimDir_Normal.y, player.velocity.x, player.velocity.y, bullets);
+           // player.current_Energy -= weapon[0].Cost;
         }
     
         //##UPDATE movement LOGIC##
@@ -311,6 +314,19 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     }
                 }
             }
+
+            if(Chests.size() > 0)
+            {
+                for(int i = 0; i < Chests.size(); i++)
+                {
+                    Chests[i]->update(player.Hitbox.getPosition());
+                    if(Chests[i]->SpawnItem)
+                    {
+                        items.push_back(new ITEM((rand()%2 == 0? "Potion":"Gun"), Chests[i]->ChestSprite.getPosition().x,  Chests[i]->ChestSprite.getPosition().y - 5.f));
+                        Chests[i]->SpawnItem = false;
+                    }
+                }
+            }
         //##Render##
         // clear old frame before render new one
             window.clear(sf::Color::Transparent);
@@ -337,9 +353,8 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             //Draw Chest
             if(Chests.size() > 0)
             {
-                for(i = 0; i < gameLogic.Amount_ChestRoom; i++)
+                for(int i = 0; i < Chests.size(); i++)
                 {
-                    Chests[i]->update(player.Hitbox.getPosition());
                     window.draw(Chests[i]->ChestSprite);
                 }
                 /*for(auto *e_chest: Chests)
@@ -355,10 +370,24 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             //draw Portal
             window.draw(portal.PortalIn);
             window.draw(portal.PortalOut);
+
             //draw player
             window.draw(player.CharModel);
            // window.draw(player.Hitbox);
             window.draw(weapon[0].GunModel);
+
+            //draw Item
+            if(items.size() > 0)
+            {
+                for(auto *Element_item: items)
+                {
+                    auto it_item = std::find(items.begin(), items.end(), Element_item);            
+                    if(it_item != items.end())
+                    {
+                       window.draw(Element_item->ItemSprite);
+                    }
+                }
+            }
 
             //draw Enemies
             if(Enemies.size() > 0)

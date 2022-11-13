@@ -6,6 +6,7 @@ class CHEST
 {
     public:
         sf::Sprite ChestSprite;
+        bool SpawnItem;
         CHEST(float SpawnPos_x, float SpawnPos_y);
         void update(sf::Vector2f playerPosi);
         bool isPlayerOpenChest(sf::Vector2f playerPosi);
