@@ -15,7 +15,7 @@ Portal:: Portal()
     this->PortalOut.setOrigin(sf::Vector2f(TextureSize.x/2.f, TextureSize.y/2.f));
     currentAnimation = 0;
 
-    this->AnimationCLK.restart();
+    this->AnimationCLK.reset(true);
 }
 
 void Portal::update(float dt)
@@ -26,7 +26,7 @@ void Portal::update(float dt)
         this->PortalOut.setTextureRect(sf::IntRect( TextureSize.x * currentAnimation, 0, TextureSize.x, TextureSize.y));
         this->PortalIn.setTextureRect(sf::IntRect( TextureSize.x * currentAnimation, 0, TextureSize.x, TextureSize.y));
         currentAnimation = (currentAnimation + 1) % 8;
-        this->AnimationCLK.restart();
+        this->AnimationCLK.reset(true);
     }
 }
 

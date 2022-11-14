@@ -2,18 +2,17 @@
 void PLAYER::setPlayer_attribute(std::string Type)
 {
    setPlayerClass();
-   std::map<std::string, struct PlayerClassAttibute>::iterator it;
     auto random_key = PlayerClass.begin();
     std::advance(random_key, rand() % PlayerClass.size());
     it = PlayerClass.find(random_key->first);
     if (it != PlayerClass.end())
 	{
-		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize - 6)/2) );
+		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize)/2) );
    		this->CharModel.setSize(sf::Vector2f(::CellPixelSize, ::CellPixelSize));
 		this->Hitbox.setSize(sf::Vector2f(::CellPixelSize - 7, ::CellPixelSize/2.f));
 
    		this->CharModel.setOrigin(sf::Vector2f(::CellPixelSize/2.f, ::CellPixelSize/2.f));
-   		this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 7)/2.f, (::CellPixelSize - 6)/4.f));
+   		this->collisionHitbox.setOrigin(sf::Vector2f((::CellPixelSize - 7)/2.f, (::CellPixelSize)/4.f));
 		this->Hitbox.setOrigin(sf::Vector2f((::CellPixelSize - 7)/2.f, ::CellPixelSize/4.f));
 
    		// Virsual the Hitbox
@@ -36,12 +35,19 @@ void PLAYER::setPlayer_attribute(std::string Type)
 		player_Energy = it->second.Energy;
 		current_Energy = player_Energy;
 
+		skillDuration = it->second.duration;
+		Cooldown = it->second.SkillCooldown;
+
 		player_Crit_Chance = it->second.Crit_Chance;
 		current_Crit_Chance = player_Crit_Chance;
 		this->player_Skill = it->second.Skill;
 
    		currentAnimation = 0;
-   		this->Animation_CLK.restart();
+   		this->Animation_CLK.reset(true);
+		this->Skill_CLK.reset(true);
+		this->Skill_CLK.add(sf::milliseconds(sf::Int32(it->second.SkillCooldown)));
+
+		skillActivate = false;
 	}
 }
 
@@ -54,11 +60,27 @@ void PLAYER::setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y)
 
 void PLAYER::update(float dir_x)
  {
+	if(current_Energy > player_Energy)
+	{
+		current_Energy = player_Energy;
+	}
+	if(current_Health > player_Health)
+	{
+		current_Health = player_Health;
+	}
+	if(current_Health < 0)
+	{
+		current_Health = 0;
+	}
+	if(current_Ammor < 0)
+	{
+		current_Ammor = 0;
+	}
    this->Animation_Timer = Animation_CLK.getElapsedTime();
    if(this->Animation_Timer.asMilliseconds() > 125)
    {
 		currentAnimation = (currentAnimation + 1) % 4;
-		this->Animation_CLK.restart();
+		this->Animation_CLK.reset(true);
    }
    
    if(this->velocity.x != 0 || this->velocity.y != 0)
@@ -155,8 +177,45 @@ void PLAYER::setPlayerClass()
 {
   PlayerClass = 
   {
-    {"Knight", PlayerClassAttibute(6, 5, 180, 5, std::string("../content/Sprite/Knight.png"), std::string("Dual Wielding"))},
-    {"Priest", PlayerClassAttibute(12, 3, 200, 1, std::string("../content/Sprite/Priest.png"), std::string("Heal"))},
-    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, std::string("../content/Sprite/Rogue.png"), std::string("FatalShot"))}
+    {"Knight", PlayerClassAttibute(6, 5, 180, 5, 45000,  5000, std::string("../content/Sprite/Knight.png"), std::string("Dual Wielding"))},
+    {"Priest", PlayerClassAttibute(12, 3, 200, 1, 90000, 4000, std::string("../content/Sprite/Priest.png"), std::string("Heal"))},
+    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, 30000, 5000, std::string("../content/Sprite/Rogue.png"), std::string("FatalShot"))}
   };
+}
+
+void PLAYER::Skillcast(float &multiFireRate)
+{
+	this->Cooldown_Skill = this->Skill_CLK.getElapsedTime();
+	if(this->Cooldown_Skill.asMilliseconds() >= Cooldown)
+	{
+		this->Cooldown_Skill = sf::milliseconds(it->second.SkillCooldown);
+	}
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) && this->Cooldown_Skill.asMilliseconds() >= Cooldown)
+	{
+		this->Duration_CLK.reset(true);
+		skillActivate = true;
+	}
+	this->Duration_Skill = this->Duration_CLK.getElapsedTime();
+	if(skillActivate && Duration_Skill.asMilliseconds() <= skillDuration)
+	{
+		this->Skill_CLK.reset(true);
+		if(it->second.Skill.compare("Dual Wielding") == 0)
+		{
+			multiFireRate = 2.f;
+		}
+		else if((it->second.Skill.compare("Heal") == 0) && Duration_Skill.asMilliseconds()%1000 ==  0)
+		{
+			current_Health += 1;
+		}
+		else
+		{
+			current_Crit_Chance = 100.f;
+		}
+	}
+	else
+	{
+		skillActivate = false;
+		multiFireRate = 1.f;
+		current_Crit_Chance = player_Crit_Chance;
+	}
 }

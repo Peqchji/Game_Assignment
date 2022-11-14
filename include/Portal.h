@@ -19,7 +19,7 @@ class Portal
         sf::Texture OutTexture;
         sf::Vector2f TextureSize;
         
-        sf::Clock AnimationCLK;
+        sftools::Chronometer AnimationCLK;
         sf::Time AnimationTimer;
         int currentAnimation;
 

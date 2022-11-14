@@ -44,11 +44,12 @@ class WEAPON
 
         WEAPON();
 
-        void init_Gun(std::string &Type, float playerPosi_x, float playerPosi_y);
-        void shotingOut(std::string &Type, float dir_x, float dir_y, float &playerVelocity_x, float &playerVelocity_y, std::vector<BULLET*> &bullets);
+        void init_Gun(std::string Type, float playerPosi_x, float playerPosi_y);
+        void shotingOut(std::string Type, float dir_x, float dir_y, std::vector<BULLET*> &bullets);
         void update(float Posi_x, float Posi_y, float dir_x, float dir_y);
         
         std::map<std::string, struct GunAttribute> GunType;
+        std::map<std::string, struct GunAttribute>::iterator it;
     private:
         void setGunType();
         int gatlingState = 0;

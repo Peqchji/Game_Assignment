@@ -10,19 +10,25 @@ class PLAYER{
             float Ammor;
             float Energy;
             float Crit_Chance;
+            float SkillCooldown;
+            float duration;
             std::string Skill;
             std::string texture;
 
-            PlayerClassAttibute(float _Health, float _Ammor, float _Energy, float _Crit_Chance, std::string _texture, std::string _Skill)
+            PlayerClassAttibute(float _Health, float _Ammor, float _Energy, float _Crit_Chance, float _skillcooldown, float _duration, std::string _texture, std::string _Skill)
             {
                 Health = _Health;
                 Ammor = _Ammor;
                 Energy = _Energy;
                 Crit_Chance = _Crit_Chance;
                 Skill = _Skill;
+                SkillCooldown = _skillcooldown;
+                duration = _duration;
                 texture = _texture; 
             }
         };
+        float Cooldown;
+        float skillDuration;
 
         float player_Health;
         float current_Health;
@@ -49,14 +55,27 @@ class PLAYER{
         void setZeroVelocity();
         void update(float dir_x);
         void PlayerCollision(short currentRoom, std::vector<std::vector<sf::RectangleShape>> &Wall);
+        void Skillcast(float &multiFireRate);
+        sf::Time Cooldown_Skill;
 
     private:
         std::map<std::string, struct PlayerClassAttibute> PlayerClass;
-        sf::Clock Animation_CLK;
+        std::map<std::string, struct PlayerClassAttibute>::iterator it;
+
+        sftools::Chronometer Animation_CLK;
         sf::Time Animation_Timer;
+
+        sftools::Chronometer Duration_CLK;
+        sf::Time Duration_Skill;
+
+        sftools::Chronometer Skill_CLK;
+
         sf::Texture PlayerTexture;
         int currentAnimation;
         sf::Vector2f textureSize;
+
+        bool skillActivate;
+
         void setPlayerClass();
 };
 #endif

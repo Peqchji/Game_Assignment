@@ -11,13 +11,16 @@ class BULLET
         short AimDirRotate;
 
         int bulletFrame;
-        sf::Clock AnimationCLK;
+        sftools::Chronometer AnimationCLK;
         sf::Time AnimationTimer;
         sf::Vector2f Spritesize;
 
     public:
         float bulletDamage;
         sf::Sprite bulletShape;
+        sf::RectangleShape bulletHitbox;
+         sftools::Chronometer CLK;
+         sf::Time Timer;
         BULLET();
         BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float damage, float Speed);
 
@@ -25,8 +28,5 @@ class BULLET
         bool bulletLifeTime();
         void setBulletTexture();
         void update(float deltaTime);
-
-        sf::Clock CLK;
-        sf::Time Timer;
 };
 #endif

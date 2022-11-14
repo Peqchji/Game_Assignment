@@ -4,6 +4,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
+#include <Chronometer.hpp>
 
 #include <cstdlib>
 #include <ctime>

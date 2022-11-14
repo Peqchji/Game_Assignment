@@ -33,19 +33,23 @@ class ENEMY
         float Enemy_Health;
         int Enemy_Score;
         ENEMY();
-        ENEMY(std::string Type, float init_Posi_x, float init_Posi_y);
+        ENEMY(float Hardness, float init_Posi_x, float init_Posi_y);
 
         void update(float &dt, short currentRoom, sf::Vector2f &playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
-        bool getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage);
-        bool Hitting(sf::RectangleShape playerHitbox);
+        bool getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage, float playerCrit, float gunCrit);
+        bool Hitting(sf::RectangleShape &playerHitbox);
 
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
 
-        sf::Clock Animation_CLK;
+        sftools::Chronometer Animation_CLK;
         sf::Time Animation_Timer;
-        sf::Clock ZigzagCLK;
+        sftools::Chronometer ZigzagCLK;
         sf::Time ZigzagTimer;
+
+        sftools::Chronometer AttackCLK;
+        sf::Time AttackTimer;
+        bool active;
 
         sf::Vector2f EnemyVelocity;
 
@@ -63,6 +67,7 @@ class ENEMY
 
         short currentRoomID = 0;
         int EnemyAnimation;
+        float HardnessMultiply;
 
         void setEnemyType();
 

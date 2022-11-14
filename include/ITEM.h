@@ -6,7 +6,8 @@ class ITEM{
     public:
         sf::Sprite ItemSprite;
         ITEM(std::string Type, float init_Posi_x, float init_Posi_y);
-        bool isItemPickedUp();
+        bool isItemPickedUp(sf::RectangleShape &playerHitbox, float &currentPlayerHealth, float &currentPlayerEnergy, std::string &GunHolding);
+        std::string itemType;
     private:
         struct PotionAttribute
         {
@@ -27,8 +28,14 @@ class ITEM{
         std::map<std::string, struct PotionAttribute> potionType;
         std::map<std::string, struct GunAttribute> gunType;
 
+        std::map<std::string, struct PotionAttribute>::iterator it_potion;
+        std::map<std::string, struct GunAttribute>::iterator it_gun;
+
         sf::Texture texture;
         sf::Vector2f textureSize;
+
+        sftools::Chronometer pickupDelay;
+        sf::Time pickupDelayTimer;
         void setPotionAttribute();
         void setGunAttribute();
 };

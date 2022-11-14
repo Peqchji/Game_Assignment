@@ -12,7 +12,9 @@
 	🔴 Menu or HUB and pause system
 	🔴 leaderboard
 	🟡 UI
-	🟡 Player Logic
+		🟢 GUI Interact with other logics
+		🟡 Text in GUI 
+	🟢 Player Logic
 	🟢 Player class
 	🟢 Enemy Logic
 	🟢 Gun and Bullet logic

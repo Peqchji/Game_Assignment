@@ -12,7 +12,7 @@ CHEST::CHEST(float SpawnPos_x, float SpawnPos_y)
     currentAnimation = 0;
 
     SpawnItem = false;
-    this->AnimationCLK.restart();
+    this->AnimationCLK.reset(true);
     setupChest(SpawnPos_x, SpawnPos_y);
 }
 
@@ -21,7 +21,7 @@ void CHEST::update(sf::Vector2f playerPosi)
     AnimationTimer = AnimationCLK.getElapsedTime();
     if(isPlayerOpenChest(playerPosi) && currentAnimation == 0 )
     {
-        AnimationCLK.restart();
+        AnimationCLK.reset(true);
         currentAnimation = 1;
     }
     else if(currentAnimation == 1 && AnimationTimer.asMilliseconds() >= 250)

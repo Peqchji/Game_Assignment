@@ -1,5 +1,5 @@
 #include "ENEMY.h"
-ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
+ENEMY::ENEMY(float Hardness,  float init_Posi_x, float init_Posi_y)
 {
     setEnemyType();
     std::map<std::string, struct EnemyAttribute>::iterator it;
@@ -9,11 +9,11 @@ ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
     it = EnemyType.find(EntityType);
     if (it != EnemyType.end())
     {
-
+        HardnessMultiply = static_cast<float>(pow(1.01, Hardness));
         Enemy_damage = it->second.Damage;
-        Enemy_Health = it->second.Health;
-        Enemy_Speed = it->second.Speed;
-        Enemy_Score = it->second.score;
+        Enemy_Health = it->second.Health * static_cast<float>(pow(1.05, Hardness));
+        Enemy_Speed = it->second.Speed * HardnessMultiply;
+        Enemy_Score = it->second.score * static_cast<float>(pow(1.03, Hardness));
         this->EnemySprite.setPosition(init_Posi_x, init_Posi_y);
         this->EnemyTexture.loadFromFile(it->second.Texture);
         this->EnemySprite.setTexture(this->EnemyTexture);
@@ -33,8 +33,10 @@ ENEMY::ENEMY(std::string Type,  float init_Posi_x, float init_Posi_y)
         this->EnemyHitbox.setOutlineColor(sf::Color::Red);
         this->EnemyHitbox.setOutlineThickness(1.f);
 
-        this->Animation_CLK.restart(); 
-        this->ZigzagCLK.restart();
+        this->Animation_CLK.reset(true); 
+        this->ZigzagCLK.reset(true);
+
+        active = true;
     }
 }
 
@@ -45,9 +47,9 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
     if(Animation_Timer.asMilliseconds() > 125)
     {
         EnemyAnimation = (EnemyAnimation + 1) % 4;
-        this->Animation_CLK.restart();
+        this->Animation_CLK.reset(true);
     }
-    if(playerDetected(playerposi))
+    if(playerDetected(playerposi) && active)
     {
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + 4 + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
         if(EntityType.compare("toxicSlime") == 0)
@@ -61,18 +63,21 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
     }
     else
     {
-        ZigzagCLK.restart();
+        ZigzagCLK.reset(true);
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
     }
 
 }
 
-bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage)
+bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage, float playerCrit, float gunCrit)
 {
     bool isHit = false;
+    int RNDcrit = rand()%100 + 1;
+    float critChance = playerCrit + gunCrit;
+    float damageMultiplier = RNDcrit < critChance? 1.5: 1;
     if(BulletCollision(Bullet, Amount_Bullet))
     {
-        Enemy_Health -= ReceivedDamage;
+        Enemy_Health -= ReceivedDamage * damageMultiplier;
         isHit = true;
     }
     return isHit;
@@ -112,7 +117,7 @@ bool ENEMY::playerDetected(sf::Vector2f playerPosi)
     distance = sqrt(pow(diff_Position.x, 2) + pow(diff_Position.y, 2));
     dir_normal.x = diff_Position.x / static_cast<float>(distance);
     dir_normal.y = diff_Position.y / static_cast<float>(distance);
-    if(distance < ::CellPixelSize * detection_Dist)
+    if(active && distance < ::CellPixelSize * detection_Dist)
         { return true; }
     return false;
 }
@@ -129,7 +134,7 @@ void ENEMY::NormalInteract(float delta_Time, sf::Vector2f &Player,  std::vector<
 void ENEMY::ZigzagInteract(float delta_Time, sf::Vector2f &Player,  std::vector<std::vector<sf::RectangleShape>> Wall)
 {
     this->ZigzagTimer = this->ZigzagCLK.getElapsedTime();
-    double radius = (sin(this->ZigzagTimer.asSeconds()* 3.00));
+    double radius = (sin(this->ZigzagTimer.asSeconds() * 3.00));
     this->EnemyVelocity.x = static_cast<float>((dir_normal.x + (dir_normal.y * radius)) * Enemy_Speed * delta_Time);
     this->EnemyVelocity.y = static_cast<float>((dir_normal.y + (dir_normal.x * radius)) * Enemy_Speed * delta_Time);
     WallCollision(Wall);
@@ -226,6 +231,22 @@ bool ENEMY::BulletCollision(sf::Sprite Bullet, int Amount_Bullet)
             return true;
         }
         ++i;
+    }
+    return false;
+}
+
+bool ENEMY::Hitting(sf::RectangleShape &playerHitbox)
+{
+    AttackTimer = AttackCLK.getElapsedTime();
+    if(active && playerHitbox.getGlobalBounds().intersects(EnemyHitbox.getGlobalBounds()))
+    {
+        AttackCLK.reset(true);
+        active = false;
+        return true;
+    }
+    if(!active && AttackTimer.asMilliseconds() >= 2000/HardnessMultiply)
+    {
+        active = true;
     }
     return false;
 }
