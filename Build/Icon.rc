@@ -1,0 +1,6 @@
+#ifndef ICON_RC
+#define ICON_RC
+
+MAINICON ICON "../Build/Icon.ico"
+
+#endif

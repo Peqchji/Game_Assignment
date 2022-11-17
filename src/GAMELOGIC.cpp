@@ -12,7 +12,6 @@ void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
     {
         roomType.push_back(std::string(""));
     }
-    printf("%d %d\n", Amount_ChestRoom, roomType.size());
     while(chestroomCreated != Amount_ChestRoom)
     {
         room_id = (rand()%(AMOUNT_Room - 1)) + 1;
@@ -54,6 +53,5 @@ void GAMELOGIC::SpawnChest(std::vector<CHEST*> &Chest, short SpawnGrid_x, short 
     float init_Posi_y;
     init_Posi_x = static_cast<float>(SpawnGrid_x * ::GridPixelSize) + (::CellPixelSize * 16.5);
     init_Posi_y = static_cast<float>(SpawnGrid_y * ::GridPixelSize) + (::CellPixelSize * 16.5);
-    printf("init %f, %f\n", init_Posi_x, init_Posi_y);
     Chest.push_back(new CHEST(init_Posi_x, init_Posi_y) );
 }

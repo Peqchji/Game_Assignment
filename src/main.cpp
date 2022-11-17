@@ -6,20 +6,25 @@
 #include "GUI.h"
 #include "ITEM.h"
 
-int Gameplay(sf::RenderWindow &window, sf::View &view);
-//void setFont();
+int Gameplay(sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2);
 int main()
 {   
     int gameState = 0;
+    sf::Image icon;
+    icon.loadFromFile("Icon.png");
     sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Titlebar | sf::Style::Close);
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());  
     sf::View view;
-    //setFont();
+    sf::Font font_V1;
+    font_V1.loadFromFile("../content/GUI/MinimalPixelFont.ttf");
+    sf::Font font_V2;
+    font_V2.loadFromFile("../content/GUI/MinimalPixel v2.ttf");
     while(window.isOpen())
     {
         switch(gameState)
         {
             case 0:
-                Gameplay(window, view);
+                Gameplay(window, view, font_V1, font_V2);
                 gameState = 2;
                 break;
             default:
@@ -29,13 +34,13 @@ int main()
     }
     return 0;
 }
-int Gameplay(sf::RenderWindow &window, sf::View &view)
+int Gameplay(sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2)
 {
     int x, y, i;
     short RoomIn_A_Map = 5;
     short RoomCleared = 0;
     bool InGame = true;
-    int score = 0;
+    unsigned int score =  0;
 
     int current_PlayerPosi_RoomID;
     int room_id;
@@ -53,7 +58,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     Portal portal;
     WEAPON weapon[2];
 
-    GUI gui;
+    GUI gui(font1, font2);
     
     //Timer
     sftools::Chronometer Timer_FireRate;
@@ -68,13 +73,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
     //##Setup Window##
     window.setFramerateLimit(setFPS);
-    /*sf::ContextSettings Setting;
-    Setting.antialiasingLevel = 16;*/
-
-    //Setup Icon
-    sf::Image icon;
-    icon.loadFromFile("Icon.png");
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());  
 
     // Setup View
     sf::Event ev;
@@ -97,9 +95,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
 
 
     //##Setup Global Logic##
-    world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
-    world.SetupMAP();
-    world.SetupRoom(RoomIn_A_Map);
+    world.CreateWorld(RoomIn_A_Map);
     gameLogic.RandomRoomType(RoomIn_A_Map);
 
     view.setSize(ScreenWidth/ScaleUp, ScreenHeight/ScaleUp);
@@ -126,7 +122,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
     {
         if (gameLogic.roomType[i].compare("ChestRoom") == 0)
         {
-            printf("bruh: %d: %d, %d\n", i, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
             gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
         }
     }
@@ -181,9 +176,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 }
                 HardnessMultiplier += 1;
                 world.AllClear();
-                world.Random_GRID(RoomIn_A_Map); // Should call first another METHOD
-                world.SetupMAP();
-                world.SetupRoom(RoomIn_A_Map);
+                world.CreateWorld(RoomIn_A_Map);
                 gameLogic.RandomRoomType(RoomIn_A_Map);
                 Enemies.clear();
                 Chests.clear();
@@ -197,28 +190,11 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                 }
                 view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
                 player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-                printf("\nNew MAP Created\n");
-                for (y = 0; y < 9; y++)//row
-                {
-                    for(x = 0; x <9; x++)//col
-                    {
-                        std::cout << world.MAP_MATRIX[y][x] << " ";
-                    }
-                    std::cout << std::endl;
-                }
-                for(i = 0; i < RoomIn_A_Map + 1; i++)
-                {
-                    std::cout << gameLogic.roomType[i] ;
-                    std::cout << "(" << world.Field_Posi[i].Grid_row << ", " << world.Field_Posi[i].Grid_col << ") ";
-                    std :: cout << std::endl;
-                }
-                std :: cout << std::endl;
-                    portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
+                portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
                 for(i = 0; i < RoomIn_A_Map + 1 ; i++)
                 {
                     if (gameLogic.roomType[i].compare("ChestRoom") == 0)
                     {
-                        printf("bruh: %d: %d, %d\n", i, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
                         gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
                     }
                 }
@@ -241,40 +217,40 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         {   
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                player.velocity.y += -(movementSpeed * dt) / sqrt(2.f);
-                player.velocity.x += -(movementSpeed * dt) / sqrt(2.f);
+                player.velocity.y += -(player.current_Speed * dt) / sqrt(2.f);
+                player.velocity.x += -(player.current_Speed * dt) / sqrt(2.f);
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                player.velocity.y += -(movementSpeed * dt) / sqrt(2.f);
-                player.velocity.x +=  (movementSpeed * dt) / sqrt(2.f);
+                player.velocity.y += -(player.current_Speed * dt) / sqrt(2.f);
+                player.velocity.x +=  (player.current_Speed * dt) / sqrt(2.f);
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {   
-                player.velocity.y +=  (movementSpeed * dt) / sqrt(2.f);
-                player.velocity.x += -(movementSpeed * dt) / sqrt(2.f);
+                player.velocity.y +=  (player.current_Speed * dt) / sqrt(2.f);
+                player.velocity.x += -(player.current_Speed * dt) / sqrt(2.f);
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {   
-                player.velocity.y +=  (movementSpeed * dt) / sqrt(2.f);
-                player.velocity.x +=  (movementSpeed * dt) / sqrt(2.f);
+                player.velocity.y +=  (player.current_Speed * dt) / sqrt(2.f);
+                player.velocity.x +=  (player.current_Speed * dt) / sqrt(2.f);
             }
             // NEWS
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                player.velocity.y += -movementSpeed * dt;
+                player.velocity.y += -player.current_Speed * dt;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                player.velocity.x += -movementSpeed * dt;
+                player.velocity.x += -player.current_Speed * dt;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                player.velocity.y += movementSpeed * dt;
+                player.velocity.y += player.current_Speed * dt;
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                player.velocity.x += movementSpeed * dt;
+                player.velocity.x += player.current_Speed * dt;
             }
         }
         player.Skillcast(increaseFireRate);
@@ -282,9 +258,9 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
         {
             Timer_FireRate.reset(true);
             weapon[currentGun].shotingOut(std::string(weapon[currentGun].it->first), AimDir_Normal.x, AimDir_Normal.y, bullets);
-            if(weapon[currentGun].it->first.compare("Gatling Gun"))
+            if(weapon[currentGun].it->first.compare("Gatling Gun") == 0)
             {
-                player.velocity /= 4.f;
+                player.velocity /= 3.f;
             }
             player.current_Energy -= weapon[currentGun].Cost;
         }
@@ -320,7 +296,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             weapon[0].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             weapon[1].update(playerPosi.x, playerPosi.y, AimDir_Normal.x, AimDir_Normal.y);
             view.setCenter(playerPosi.x, playerPosi.y);
-            gui.update(currentGun, player.CharModel ,playerPosi.x, playerPosi.y, player.current_Health, player.current_Energy, player.player_Health, player.player_Energy, player.current_Ammor, player.Cooldown_Skill.asMilliseconds(), player.Cooldown);
+            gui.update(currentGun, weapon[0].GunTexture, weapon[1].GunTexture, player.CharModel, score, playerPosi.x, playerPosi.y, player.current_Health, player.current_Energy, player.player_Health, player.player_Energy, player.current_Ammor, player.Cooldown_Skill.asMilliseconds(), player.Cooldown);
             for(auto *Enemy: Enemies)
             {
                 auto it_enemy = std::find(Enemies.begin(), Enemies.end(), Enemy);
@@ -329,9 +305,13 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                     if(Enemy->Hitting(player.Hitbox))
                     {
                         if(player.current_Ammor > 0)
+                        {
                             player.current_Ammor -= Enemy->Enemy_damage;
+                        }
                         else
+                        {
                             player.current_Health -= Enemy->Enemy_damage;
+                        }
                     }
                     Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
                     if(Enemy->Enemy_Health <= 0)
@@ -342,7 +322,6 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
                         {
                             items.push_back(new ITEM("EnergyPotion", Enemy->Position.x,  Enemy->Position.y));
                         }
-                        printf("score: %d", score);
                        Enemies.erase(it_enemy);
                     }
                     if(bullets.size() > 0)
@@ -467,6 +446,7 @@ int Gameplay(sf::RenderWindow &window, sf::View &view)
             window.setView(window.getDefaultView());
         // Done Draw and Display
             window.display();
+
             lastGun = gunType;
     }
     return 0;

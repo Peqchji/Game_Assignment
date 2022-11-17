@@ -35,6 +35,9 @@ void PLAYER::setPlayer_attribute(std::string Type)
 		player_Energy = it->second.Energy;
 		current_Energy = player_Energy;
 
+		player_Speed = it->second.Speed;
+		current_Speed = player_Speed;
+
 		skillDuration = it->second.duration;
 		Cooldown = it->second.SkillCooldown;
 
@@ -177,9 +180,9 @@ void PLAYER::setPlayerClass()
 {
   PlayerClass = 
   {
-    {"Knight", PlayerClassAttibute(6, 5, 180, 5, 45000,  5000, std::string("../content/Sprite/Knight.png"), std::string("Dual Wielding"))},
-    {"Priest", PlayerClassAttibute(12, 3, 200, 1, 90000, 4000, std::string("../content/Sprite/Priest.png"), std::string("Heal"))},
-    {"Rogue" , PlayerClassAttibute(5, 3, 180, 10, 30000, 5000, std::string("../content/Sprite/Rogue.png"), std::string("FatalShot"))}
+    {"Knight", PlayerClassAttibute(70, 6, 5, 180, 5, 45000,  5000, std::string("../content/Sprite/Knight.png"), std::string("Dual Wielding"))},
+    {"Priest", PlayerClassAttibute(60, 12, 3, 200, 1, 90000, 4000, std::string("../content/Sprite/Priest.png"), std::string("Heal"))},
+    {"Rogue" , PlayerClassAttibute(80, 5, 3, 180, 10, 30000, 5000, std::string("../content/Sprite/Rogue.png"), std::string("FatalShot"))}
   };
 }
 
@@ -203,9 +206,10 @@ void PLAYER::Skillcast(float &multiFireRate)
 		{
 			multiFireRate = 2.f;
 		}
-		else if((it->second.Skill.compare("Heal") == 0) && Duration_Skill.asMilliseconds()%1000 ==  0)
+		else if((it->second.Skill.compare("Heal") == 0) && Duration_Skill.asMilliseconds() > 1000*healing)
 		{
 			current_Health += 1;
+			healing += 1;
 		}
 		else
 		{
@@ -217,5 +221,6 @@ void PLAYER::Skillcast(float &multiFireRate)
 		skillActivate = false;
 		multiFireRate = 1.f;
 		current_Crit_Chance = player_Crit_Chance;
+		healing = 0;
 	}
 }

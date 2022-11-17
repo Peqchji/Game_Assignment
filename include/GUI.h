@@ -8,8 +8,8 @@ class GUI{
         sf::RenderTexture GUI_buffer;
         sf::Sprite currentGUI;
 
-        GUI();
-        void update(int &currentTool, sf::RectangleShape &player, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, float currentCooldown, float MaxCooldown);
+        GUI(sf::Font &fontV1, sf::Font &fontV2);
+        void update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, sf::RectangleShape &player, float score, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, float currentCooldown, float MaxCooldown);
     private:
         sf::Texture frontHP;
         sf::Texture selector;
@@ -25,6 +25,8 @@ class GUI{
         sf::Sprite _selector;
         sf::RectangleShape playerModel;
         sf::Sprite CoolDownStat;
+        sf::Sprite Gun_1;
+        sf::Sprite Gun_2;
 
         sftools::Chronometer Sel_CLK;
         sf::Time Sel_Timer;
@@ -40,6 +42,14 @@ class GUI{
 
         std::vector<sf::Sprite> showSheild;
         std::map<std::string, sf::Texture> holdingTexture;
+
+        sf::Text SkillText;
+        sf::Text HealthText;
+        sf::Text EnergyText;
+        sf::Text ScoreText;
+
+        sf::Font font1;
+        sf::Font font2;
         
         void setup_newGUI(float posi_x, float posi_y);
         void moveSel();

@@ -12,12 +12,14 @@ class PLAYER{
             float Crit_Chance;
             float SkillCooldown;
             float duration;
+            float Speed;
             std::string Skill;
             std::string texture;
 
-            PlayerClassAttibute(float _Health, float _Ammor, float _Energy, float _Crit_Chance, float _skillcooldown, float _duration, std::string _texture, std::string _Skill)
+            PlayerClassAttibute(float _Speed, float _Health, float _Ammor, float _Energy, float _Crit_Chance, float _skillcooldown, float _duration, std::string _texture, std::string _Skill)
             {
                 Health = _Health;
+                Speed = _Speed;
                 Ammor = _Ammor;
                 Energy = _Energy;
                 Crit_Chance = _Crit_Chance;
@@ -29,6 +31,9 @@ class PLAYER{
         };
         float Cooldown;
         float skillDuration;
+
+        float player_Speed;
+        float current_Speed;
 
         float player_Health;
         float current_Health;
@@ -75,6 +80,7 @@ class PLAYER{
         sf::Vector2f textureSize;
 
         bool skillActivate;
+        int healing = 0;
 
         void setPlayerClass();
 };

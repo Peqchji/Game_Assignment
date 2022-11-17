@@ -17,11 +17,7 @@ class WORLD
 		
 		WORLD();
 		~WORLD();
-		void Random_GRID(short);
-		void RandomRoomType(int amountRoom);
-		void SetupMAP();
-		void SetupRoom(short Amount_of_room);
-		void SetupWall(short, short, short);
+		void CreateWorld(short &Amount);
 		int CurrentEnemyGrid(float Pos_x, float Pos_y, short Amount_of_Room);
 		int CurrentPlayerGrid(float Pos_x, float Pos_y, short Amount_of_Room);
 		void PlayerCollision(float Pos_x, float Pos_y, short currentRoom, sf::RectangleShape &playerModel, sf::RectangleShape &playerHitbox, float &velo_X,  float &velo_Y);
@@ -59,6 +55,10 @@ class WORLD
 		void TileMAPClear();
 		void WallClear();
 		
+		void Random_GRID(short);
+		void SetupMAP();
+		void SetupRoom(short Amount_of_room);
+		void SetupWall(short, short, short);
 };
 
 #endif

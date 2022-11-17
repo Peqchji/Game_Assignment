@@ -713,4 +713,11 @@ void WORLD::Random_GRID(short AMOUNT_Room = 5) //default number = 5 room + 1 spa
 
 
 }
+
+void WORLD::CreateWorld(short &Amount)
+{
+	Random_GRID(Amount); // Should call first another METHOD
+    SetupMAP();
+    SetupRoom(Amount);
+}
 //End of code line

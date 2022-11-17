@@ -34,7 +34,7 @@ ENEMY::ENEMY(float Hardness,  float init_Posi_x, float init_Posi_y)
         this->EnemyHitbox.setOutlineThickness(1.f);
 
         this->Animation_CLK.reset(true); 
-        this->ZigzagCLK.reset(true);
+        this->MovementCLK.reset(true);
 
         active = true;
     }
@@ -63,7 +63,7 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
     }
     else
     {
-        ZigzagCLK.reset(true);
+        MovementCLK.reset(true);
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
     }
 
@@ -75,9 +75,11 @@ bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamag
     int RNDcrit = rand()%100 + 1;
     float critChance = playerCrit + gunCrit;
     float damageMultiplier = RNDcrit < critChance? 1.5: 1;
+    float amountDamage =  ReceivedDamage * damageMultiplier;
     if(BulletCollision(Bullet, Amount_Bullet))
     {
-        Enemy_Health -= ReceivedDamage * damageMultiplier;
+        Enemy_Health -= amountDamage;
+
         isHit = true;
     }
     return isHit;
@@ -133,10 +135,10 @@ void ENEMY::NormalInteract(float delta_Time, sf::Vector2f &Player,  std::vector<
 
 void ENEMY::ZigzagInteract(float delta_Time, sf::Vector2f &Player,  std::vector<std::vector<sf::RectangleShape>> Wall)
 {
-    this->ZigzagTimer = this->ZigzagCLK.getElapsedTime();
-    double radius = (sin(this->ZigzagTimer.asSeconds() * 3.00));
-    this->EnemyVelocity.x = static_cast<float>((dir_normal.x + (dir_normal.y * radius)) * Enemy_Speed * delta_Time);
-    this->EnemyVelocity.y = static_cast<float>((dir_normal.y + (dir_normal.x * radius)) * Enemy_Speed * delta_Time);
+    this->MovementTimer = this->MovementCLK.getElapsedTime();
+    double radius = ((this->MovementTimer.asSeconds() * 3.00));
+    this->EnemyVelocity.x = static_cast<float>((dir_normal.x + (dir_normal.y * sin(radius))) * Enemy_Speed * delta_Time);
+    this->EnemyVelocity.y = static_cast<float>((dir_normal.y + (dir_normal.x * cos(radius))) * Enemy_Speed * delta_Time);
     WallCollision(Wall);
     this->EnemyCollisionHitbox.move(EnemyVelocity.x, EnemyVelocity.y);
     this->EnemyHitbox.move(EnemyVelocity.x, EnemyVelocity.y);

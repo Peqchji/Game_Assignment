@@ -68,7 +68,7 @@ void WEAPON::setGunType()
     {"car-SMG", GunAttribute(2, 1, 5, 8, sf::Vector2f(19.f, -2.f), sf::Vector2f(10.f, 7.f), "../content/Gun/Sprite/car-SMG.png" )},
     {"NP-9", GunAttribute(2, 1, 5, 8, sf::Vector2f(15.f, -3.f), sf::Vector2f(8.f, 7.f), "../content/Gun/Sprite/NP9.png" )},
     {"Shotgun", GunAttribute(3, 3, 0, 1.2, sf::Vector2f(25.f, -5.f), sf::Vector2f(8.f, 8.f), "../content/Gun/Sprite/Shotgun.png")},
-    {"Tactical Shotgun", GunAttribute(2.6, 3, 5, 2, sf::Vector2f(23.f, -3.f), sf::Vector2f(6.f, 8.f), "../content/Gun/Sprite/Tactical_Shotgun.png")},
+    {"Tactical Shotgun", GunAttribute(2, 2.5, 5, 2, sf::Vector2f(23.f, -3.f), sf::Vector2f(6.f, 8.f), "../content/Gun/Sprite/Tactical_Shotgun.png")},
     {"Gatling Gun", GunAttribute(2, 1, 0, 10, sf::Vector2f(29.f, 0.f), sf::Vector2f(8.f, 5.f), "../content/Gun/Sprite/Gatling_Gun.png")},
     {"Sniper Rifle", GunAttribute(16, 4, 45, 1.2, sf::Vector2f(35.f, -2.f), sf::Vector2f(15.f, 9.f), "../content/Gun/Sprite/Sniper_Rifle.png")}
   };

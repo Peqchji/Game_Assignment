@@ -44,8 +44,8 @@ class ENEMY
 
         sftools::Chronometer Animation_CLK;
         sf::Time Animation_Timer;
-        sftools::Chronometer ZigzagCLK;
-        sf::Time ZigzagTimer;
+        sftools::Chronometer MovementCLK;
+        sf::Time MovementTimer;
 
         sftools::Chronometer AttackCLK;
         sf::Time AttackTimer;
