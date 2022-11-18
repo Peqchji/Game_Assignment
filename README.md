@@ -10,7 +10,7 @@
 		🟢 Wall load and draw
 		🟢 Wall collision
 	🟡 Menu or HUB and pause system
-	🔴 leaderboard
+	🟡 leaderboard
 	🟢 UI
 		🟢 GUI Interact with other logics
 		🟢 Text in GUI 
