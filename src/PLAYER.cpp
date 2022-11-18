@@ -1,10 +1,8 @@
 #include "PLAYER.h"
 void PLAYER::setPlayer_attribute(std::string Type)
 {
-   setPlayerClass();
-    auto random_key = PlayerClass.begin();
-    std::advance(random_key, rand() % PlayerClass.size());
-    it = PlayerClass.find(random_key->first);
+    setPlayerClass();
+    it = PlayerClass.find(Type);
     if (it != PlayerClass.end())
 	{
 		this->collisionHitbox.setSize(sf::Vector2f(::CellPixelSize - 7, (::CellPixelSize)/2) );
@@ -193,7 +191,7 @@ void PLAYER::Skillcast(float &multiFireRate)
 	{
 		this->Cooldown_Skill = sf::milliseconds(it->second.SkillCooldown);
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) && this->Cooldown_Skill.asMilliseconds() >= Cooldown)
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::E) && this->Cooldown_Skill.asMilliseconds() >= Cooldown)
 	{
 		this->Duration_CLK.reset(true);
 		skillActivate = true;
@@ -223,4 +221,11 @@ void PLAYER::Skillcast(float &multiFireRate)
 		current_Crit_Chance = player_Crit_Chance;
 		healing = 0;
 	}
+}
+
+void PLAYER::ToggleCLK()
+{
+	Animation_CLK.toggle();
+	Duration_CLK.toggle();
+    Skill_CLK.toggle();
 }

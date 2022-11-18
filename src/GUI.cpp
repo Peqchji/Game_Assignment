@@ -9,23 +9,34 @@ GUI::GUI(sf::Font &fontV1, sf::Font &fontV2)
     this->selector.loadFromFile("../content/GUI/Selector.png");
     this->sheild.loadFromFile("../content/GUI/Sheild.png");
     this->coolDownTexture.loadFromFile("../content/GUI/CoolDownStat.png");
+    this->PauseButton.loadFromFile("../content/GUI/PauseButton_GUI.png");
 
     this->font1 = fontV1;
     this->font2 = fontV2;
     this->ScoreText.setFont(font1);
     this->ScoreText.setCharacterSize(48.f);
-    this->ScoreText.setOrigin(0, (ScoreText.getLocalBounds().top+ScoreText.getLocalBounds().height)/2.f);
     this->ScoreText.setFillColor(sf::Color::White);
-    this->ScoreText.setPosition(138.f, 53.f);
+    this->ScoreText.setPosition(141.f, 53.f);
 
     this->HealthText.setFont(font1);
     this->HealthText.setCharacterSize(30.f);
     this->HealthText.setFillColor(sf::Color::Black);
-    this->HealthText.setPosition(208.f,  3.f);
+    this->HealthText.setPosition(199.f,  2.f);
 
     this->EnergyText.setFont(font1);
-    this->EnergyText.setCharacterSize(36.f);
+    this->EnergyText.setCharacterSize(30.f);
+    this->EnergyText.setFillColor(sf::Color::Black);
+    this->EnergyText.setPosition(199.f,  28.f);
 
+    this->SkillText.setFont(font1);
+    this->SkillText.setCharacterSize(30.f);
+    this->SkillText.setFillColor(sf::Color::Yellow);
+    this->SkillText.setPosition(117.f, 530.f);
+
+    this->PauseButtonSprite.setTexture(this->PauseButton);
+    this->PauseButtonSprite.setOrigin(this->PauseButtonSprite.getLocalBounds().left + this->PauseButtonSprite.getLocalBounds().width, 0);
+    this->PauseButtonSprite.setPosition(sf::Vector2f(520, 0));
+    this->PauseButtonSprite.setScale(1.5, 1.5);
 
     this->baseGUI.setTexture(this->base);
     this->baseGUI.setScale(sf::Vector2f(1.f, 1.f));
@@ -43,17 +54,16 @@ GUI::GUI(sf::Font &fontV1, sf::Font &fontV2)
     this->CoolDownStat.setTexture(coolDownTexture);
 
     this->CoolDownStat.setPosition(31.f, 518.f);
-    this->HPbar.setPosition(116.f, 4.f);
-    this->Energybar.setPosition(116.f, 30.f);
+    this->HPbar.setPosition(114.f, 4.f);
+    this->Energybar.setPosition(114.f, 30.f);
     this->_selector.setPosition(891.f, 471.f);
 
-
-    Sel_CLK.reset(true);
 }
 
-void GUI::update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, sf::RectangleShape &player, float score, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, float currentCooldown, float MaxCooldown)
+void GUI::update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, sf::RectangleShape &player, float score, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, std::string &SkillName,float currentCooldown, float MaxCooldown)
 {
     std::stringstream SkillStream;
+
     std::stringstream HealthStream;
     std::stringstream EnergyStream;
     std::stringstream ScoreStream;
@@ -71,11 +81,30 @@ void GUI::update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, s
     else
         ScoreStream << score;
     this->ScoreText.setString(ScoreStream.str());
+    this->ScoreText.setOrigin(0, (ScoreText.getLocalBounds().top + ScoreText.getLocalBounds().height)/2.f);
     
     
     HealthStream << std::fixed << std::setprecision(0) << currentHP << "/" << MaxHP;
-    this->HealthText.setOrigin(sf::Vector2f((HealthText.getLocalBounds().left + HealthText.getLocalBounds().width)/2.f, (HealthText.getLocalBounds().top + HealthText.getLocalBounds().height)/2.f));
     this->HealthText.setString( HealthStream.str());
+    this->HealthText.setOrigin(sf::Vector2f((HealthText.getLocalBounds().left + HealthText.getLocalBounds().width)/2.f, (HealthText.getLocalBounds().top + HealthText.getLocalBounds().height)/2.f));
+
+    EnergyStream << std::fixed << std::setprecision(0) << currentEnergy << "/" << MaxEnergy;
+    this->EnergyText.setString( EnergyStream.str());
+    this->EnergyText.setOrigin(sf::Vector2f((EnergyText.getLocalBounds().left + EnergyText.getLocalBounds().width)/2.f, (EnergyText.getLocalBounds().top + EnergyText.getLocalBounds().height)/2.f));
+    if(MaxCooldown - currentCooldown > 0)
+    {
+        SkillStream << std::fixed << std::setprecision(1) << "CoolDown : " << (MaxCooldown-currentCooldown)/1000 << "s";
+    }
+    else if(SkillName.compare("Heal") == 0)
+    {
+        SkillStream << "Press \'E\' to cast \n \t\"" << SkillName << "\"";
+    }
+    else
+     {
+        SkillStream << "Press \'E\' to cast \n \"" << SkillName << "\"";
+    }
+    this->SkillText.setString( SkillStream.str());
+    this->SkillText.setOrigin(sf::Vector2f((SkillText.getLocalBounds().left + SkillText.getLocalBounds().width)/2.f, (SkillText.getLocalBounds().top + SkillText.getLocalBounds().height)/2.f));
 
     this->Gun_1.setTexture(Gun_no1);
     this->Gun_2.setTexture(Gun_no2);
@@ -135,7 +164,11 @@ void GUI::setup_newGUI(float posi_x, float posi_y)
     this->GUI_buffer.draw(this->playerModel);
 
     this->GUI_buffer.draw(this->HealthText);
+    this->GUI_buffer.draw(this->EnergyText);
     this->GUI_buffer.draw(this->ScoreText);
+    this->GUI_buffer.draw(this->SkillText);
+
+    this->GUI_buffer.draw(this->PauseButtonSprite);
 
     this->GUI_buffer.display();
 
@@ -155,4 +188,12 @@ void GUI::moveSel()
  {
     this->_selector.setPosition((972.f) , 471.f);
  }
+}
+
+void GUI::isPauseButtonPressed(float &mouse_x, float &mouse_y, bool &Toggle)
+{
+    if(this->PauseButtonSprite.getGlobalBounds().contains(sf::Vector2f(mouse_x, mouse_y)) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        Toggle = true;
+    }
 }

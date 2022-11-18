@@ -15,11 +15,12 @@
 #include <sstream>
 #include <cstring>
 #include <iomanip>
+#include <windows.h>
 
 #include <vector>
-#include <list>
 #include <map>
 #include <algorithm>
+#include <utility>
 
 #define setFPS 144
 #define ScreenScale 65

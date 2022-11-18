@@ -24,10 +24,15 @@ ITEM::ITEM(std::string Type,  float init_Posi_x, float init_Posi_y)
         setGunAttribute();
         if(Type.compare("Gun") == 0)
         {
+            random_gun:
             auto random_key = gunType.begin();
             std::advance(random_key, rand() % gunType.size());
             auto gun = random_key->first;
             it_gun = gunType.find(gun);
+            if(it_gun->first.compare("Pistol") == 0)
+            {
+                goto random_gun;
+            }
         }
         else
         {

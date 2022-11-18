@@ -9,7 +9,8 @@ class GUI{
         sf::Sprite currentGUI;
 
         GUI(sf::Font &fontV1, sf::Font &fontV2);
-        void update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, sf::RectangleShape &player, float score, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, float currentCooldown, float MaxCooldown);
+        void update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, sf::RectangleShape &player, float score, float &setupPosi_x, float &setupPosi_y, float currentHP, float currentEnergy, float MaxHP, float MaxEnergy, float currentSheild, std::string &SkillName, float currentCooldown, float MaxCooldown);
+        void isPauseButtonPressed(float &mouse_x, float &mouse_y, bool &Toggle);
     private:
         sf::Texture frontHP;
         sf::Texture selector;
@@ -28,8 +29,9 @@ class GUI{
         sf::Sprite Gun_1;
         sf::Sprite Gun_2;
 
-        sftools::Chronometer Sel_CLK;
-        sf::Time Sel_Timer;
+        sf::Sprite PauseButtonSprite;
+        sf::Texture PauseButton;
+
         int currentSelState = 0;
         int LastHold = 0;
         bool isHandChange = false;
@@ -53,6 +55,7 @@ class GUI{
         
         void setup_newGUI(float posi_x, float posi_y);
         void moveSel();
+
 };
 
 #endif

@@ -19,8 +19,8 @@ class BULLET
         float bulletDamage;
         sf::Sprite bulletShape;
         sf::RectangleShape bulletHitbox;
-         sftools::Chronometer CLK;
-         sf::Time Timer;
+        sftools::Chronometer CLK;
+        sf::Time Timer;
         BULLET();
         BULLET(float init_PosX, float init_PosY, float dir_x, float dir_y, float damage, float Speed);
 
@@ -28,5 +28,7 @@ class BULLET
         bool bulletLifeTime();
         void setBulletTexture();
         void update(float deltaTime);
+
+        void ToggleCLK();
 };
 #endif

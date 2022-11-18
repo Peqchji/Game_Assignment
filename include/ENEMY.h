@@ -38,7 +38,7 @@ class ENEMY
         void update(float &dt, short currentRoom, sf::Vector2f &playerposi, std::vector<std::vector<sf::RectangleShape>> &WallHitbox);
         bool getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage, float playerCrit, float gunCrit);
         bool Hitting(sf::RectangleShape &playerHitbox);
-
+        void ToggleCLK();
     private:
         std::map<std::string, struct EnemyAttribute> EnemyType;
 

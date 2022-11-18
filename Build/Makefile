@@ -1,5 +1,8 @@
 all: compile link
 
+RC:
+	windres Icon.rc Icon.o
+
 compile:
 	g++  -I ../include/ -c ../src/*.cpp
 link:

@@ -14,6 +14,7 @@ class Portal
         void setupPortal(float spawn_x, float spawn_y, float portal_x, float portal_y);
 
         bool isPlayerNearPortalOut(sf::Vector2f playerPosi);
+        void ToggleCLK();
     private:
         sf::Texture InTexture;
         sf::Texture OutTexture;

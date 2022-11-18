@@ -70,3 +70,9 @@ bool BULLET::bulletLifeTime()
     }
     return false;
 }
+
+void BULLET::ToggleCLK()
+{
+    CLK.toggle();
+    AnimationCLK.toggle();
+}

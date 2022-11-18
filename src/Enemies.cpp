@@ -252,3 +252,10 @@ bool ENEMY::Hitting(sf::RectangleShape &playerHitbox)
     }
     return false;
 }
+
+void ENEMY::ToggleCLK()
+{
+    Animation_CLK.toggle();
+    MovementCLK.toggle();
+    AttackCLK.toggle();
+}

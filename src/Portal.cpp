@@ -49,3 +49,8 @@ bool Portal::isPlayerNearPortalOut(sf::Vector2f playerPosi)
     }
     return false;
 }
+
+void Portal::ToggleCLK()
+{
+    AnimationCLK.toggle();
+}

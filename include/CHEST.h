@@ -11,6 +11,7 @@ class CHEST
         void update(sf::Vector2f playerPosi);
         bool isPlayerOpenChest(sf::Vector2f playerPosi);
         int currentAnimation;
+        void ToggleCLK();
     private:
         sf::Texture Texture;
         sf::Vector2f TextureSize;

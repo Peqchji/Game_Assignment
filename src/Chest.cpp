@@ -50,3 +50,8 @@ bool CHEST::isPlayerOpenChest(sf::Vector2f playerPosi)
     }
     return false;
 }
+
+void CHEST::ToggleCLK()
+{
+    AnimationCLK.toggle();
+}
