@@ -9,11 +9,11 @@
 		🟢 Floor load and draw
 		🟢 Wall load and draw
 		🟢 Wall collision
-	🔴 Menu or HUB and pause system
+	🟡 Menu or HUB and pause system
 	🔴 leaderboard
-	🟡 UI
+	🟢 UI
 		🟢 GUI Interact with other logics
-		🟡 Text in GUI 
+		🟢 Text in GUI 
 	🟢 Player Logic
 	🟢 Player class
 	🟢 Enemy Logic
