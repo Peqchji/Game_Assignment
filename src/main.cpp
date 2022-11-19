@@ -9,7 +9,6 @@
 #include "MENU.h"
 //#include "CAL_Results.h"
 
-int Menu(sf::RenderWindow &window, sf::View &view, sf::Font &font1, sf::Font &font2);
 int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score);
 
 int main()
@@ -18,13 +17,17 @@ int main()
     std::string playerClass("Rogue");
 
     //cal_score.sorting();
-    int gameState = 1;
+    int gameState = 0;
     //ShowWindow(GetConsoleWindow(), SW_HIDE);
     sf::Image icon;
     icon.loadFromFile("Icon.png");
     sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Titlebar | sf::Style::Close);
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());  
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr()); 
+    window.setFramerateLimit(setFPS);
+
     sf::View view;
+    view.setSize(ScreenWidth/ScaleUp, ScreenHeight/ScaleUp);
+
     sf::Font font_V1;
     font_V1.loadFromFile("../content/GUI/MinimalPixelFont.ttf");
     sf::Font font_V2;
@@ -36,30 +39,24 @@ int main()
         switch(gameState)
         {
             case 0:
-                Menu(window, view, font_V1, font_V2);
-                gameState = 1;
-                break;
-            case 1:
                 Gameplay(playerClass, window, view, font_V1, font_V2, score);
-                gameState = 2;
                 break;
             default:
-                window.close();
                 break;
         }
     }
-    return 0;
 }
-int Menu(sf::RenderWindow &window, sf::View &view, sf::Font &font1, sf::Font &font2)
-{
-    return 0;
-}
+
 int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score)
 {
     int x, y, i;
     short RoomIn_A_Map = 5;
     short RoomCleared = 0;
-    bool InGame = true;
+    bool IsOpen = true;
+    bool InGame = false;
+    bool InResults = false;
+    bool InMenu = true;
+    int MenuSel = 0;
     //std::string player_class = PlayerType;
 
     enum {RUNNING, PAUSING, GAMEOVER};
@@ -97,9 +94,6 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     //#player position
     sf::Vector2f playerPosi;
 
-    //##Setup Window##
-    window.setFramerateLimit(setFPS);
-
     // Setup View
     sf::Event ev;
 
@@ -125,7 +119,6 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     world.CreateWorld(RoomIn_A_Map);
     gameLogic.RandomRoomType(RoomIn_A_Map);
 
-    view.setSize(ScreenWidth/ScaleUp, ScreenHeight/ScaleUp);
     player.setPlayer_attribute(PlayerType);
 
     //First time set up
@@ -152,8 +145,9 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
         }
     }
+    MENU menu(font1, font2);
     //##GAME LOOP##
-    while (InGame)
+    while (IsOpen)
     {
         //event
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
@@ -162,12 +156,12 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             switch(ev.type)
             {
                 case sf::Event::Closed:
-                    InGame = false;
+                    IsOpen = false;
                     break;
                 /*case sf::Event::LostFocus:
                     break;*/
                 case sf::Event::KeyPressed:
-                    if(ev.key.code == sf::Keyboard::Escape && mode == GAMEOVER)
+                    if(ev.key.code == sf::Keyboard::Escape && mode != GAMEOVER && !InMenu)
                     {
                         toggleCLK = true; 
                     }
@@ -178,10 +172,37 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                     break;
             }
         }
-        if(player.current_Health == 0)
+        if(InMenu)
         {
-            break;
+            enum{MAINMENU, LEADERBOARD, EXIT};
+            //view.setCenter(::ScreenWidth/2.f, ::ScreenHeight/2.f);
+
+            float init_x = 0;
+            float init_y = 0;
+            window.setView(window.getDefaultView());
+            mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
+            menu.update(init_x, init_y, mousePosi.x, mousePosi.y, InMenu, InGame, MenuSel);
+            
+            window.clear(sf::Color::Transparent);
+            //window.setView(view);
+            if(MenuSel == MAINMENU)
+            {
+                window.draw(menu.MenuSprite);
+            }
+            else if(MenuSel == EXIT)
+            {
+                window.close();
+                IsOpen = false;
+            }
+            window.display();
         }
+        else if(InGame)
+        {
+        if(player.current_Health == 0)
+            {
+            mode = GAMEOVER;
+            toggleCLK = true;
+            }
         //## GAME LOGIC process ##
         // Input Handle
             // NW NE SW SE
@@ -192,6 +213,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             if(mode == PAUSING)
             {
                 mode = RUNNING;
+                EnableEnemiesCLK = true;
+            }
+            else if(mode == GAMEOVER)
+            {
                 EnableEnemiesCLK = true;
             }
             else
@@ -219,10 +244,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             toggleCLK = false;
         }
         toggleCLK = false;
+        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
         player.setZeroVelocity();
-        mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
         dt = dt_clock.reset(true).asSeconds(); // เอาเวลาระหว่างเฟรม
         if(mode == RUNNING)
         {
@@ -505,17 +530,50 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                         //window.draw(bullet->bulletHitbox);
                     }
                 }
-                if(mode != PAUSING)
+                if(mode == RUNNING)
                 {
                     window.draw(gui.currentGUI);
                 }
-                else
+                else if(mode == PAUSING)
                 {
                     window.draw(pause.PauseSprite);
                 }
                 window.setView(window.getDefaultView());
             // Done Draw and Display
                 window.display();
+            
+            }
+        else if(!InGame && !InMenu)
+        {
+            InMenu = true;
+            toggleCLK = true;
+            player.current_Ammor = player.player_Ammor;
+            RoomIn_A_Map = 5;
+            HardnessMultiplier = 0;
+            world.AllClear();
+            world.CreateWorld(RoomIn_A_Map);
+            gameLogic.RandomRoomType(RoomIn_A_Map);
+            Enemies.clear();
+            Chests.clear();
+            items.clear();
+            for(i = 0; i < RoomIn_A_Map ; i++)
+            {
+                if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                {
+                    gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                }
+            }
+            view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
+            player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+            portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
+            for(i = 0; i < RoomIn_A_Map + 1 ; i++)
+            {
+                if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+                {
+                    gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                }
+            }
+        }
     }
     return 0;
 }

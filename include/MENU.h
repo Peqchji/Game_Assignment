@@ -1,23 +1,23 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include<MASTER.h>
+#include <MASTER.h>
 class MENU{
     public:
                 sf::RenderTexture MenuBuffer;
                 sf::Sprite MenuSprite;
 
                 MENU(sf::Font &fontV1, sf::Font &fontV2);
-                void update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, float &mousePosi_y, bool &Toggle, bool &Running);
+                void update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, float &mousePosi_y, bool &Running, bool &StartGame, int &MenuState);
         private:
                 sf::Font FontSmall;
                 sf::Font FontLarge;
                 sf::Text Leaderboard;
                 sf::Text Exit;
                 sf::Text Start;
+                sf::Text Name;
+                sf::Text GameName;
 
-                sf::Sprite PauseBase;
-                sf::Texture PauseBaseTexture;
 
                 sf::RectangleShape Input_1;
                 sf::RectangleShape Input_2;
@@ -30,9 +30,11 @@ class MENU{
                 sf::Sprite InputBlock[3];
                 sf::Texture InputBlockTexture;
 
+                sf::Sprite MenuBase;
+                sf::Texture MenuBaseTexture;
 
-                void setup_newPAUSE(float posi_x, float posi_y, float mouse_x, float mouse_y);
-                bool isResumeSEL(float Posi_x, float Posi_y, sf::RectangleShape  &Container);
+                void setup_newMENU(float posi_x, float posi_y);
+                bool isSELECT(float Posi_x, float Posi_y, sf::RectangleShape  &Container);
 };
 
 #endif

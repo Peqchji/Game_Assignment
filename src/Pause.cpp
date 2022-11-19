@@ -12,6 +12,8 @@ PAUSE::PAUSE(sf::Font &fontV1, sf::Font &fontV2)
     this->Resume.setFillColor(sf::Color::White);
     this->Resume.setOrigin(sf::Vector2f((Resume.getLocalBounds().left + Resume.getLocalBounds().width)/2.f, (Resume.getLocalBounds().top + Resume.getLocalBounds().height)/2.f));
     this->Resume.setPosition(520.f, 293.f);
+    this->Resume.setOutlineColor(sf::Color::Black);
+    this->Resume.setOutlineThickness(2.f);
 
     this->Exit.setFont(this->FontLarge);
     this->Exit.setString("Exit to Results");
@@ -19,6 +21,8 @@ PAUSE::PAUSE(sf::Font &fontV1, sf::Font &fontV2)
     this->Exit.setFillColor(sf::Color::White);
     this->Exit.setOrigin(sf::Vector2f((Exit.getLocalBounds().left + Exit.getLocalBounds().width)/2.f, (Exit.getLocalBounds().top + Exit.getLocalBounds().height)/2.f));
     this->Exit.setPosition(520.f, 367.f);
+    this->Exit.setOutlineColor(sf::Color::Black);
+    this->Exit.setOutlineThickness(2.f);
 
     this->PauseText.setFont(this->FontLarge);
     this->PauseText.setString("==Pause==");
@@ -26,6 +30,9 @@ PAUSE::PAUSE(sf::Font &fontV1, sf::Font &fontV2)
     this->PauseText.setFillColor(sf::Color::White);
     this->PauseText.setOrigin(sf::Vector2f((PauseText.getLocalBounds().left + PauseText.getLocalBounds().width)/2.f, (PauseText.getLocalBounds().top + PauseText.getLocalBounds().height)/2.f));
     this->PauseText.setPosition(520.f, 219.f);
+    this->PauseText.setOutlineColor(sf::Color::Black);
+    this->PauseText.setOutlineThickness(2.f);
+    
 
     this->Input_1.setSize((sf::Vector2f(192.f, 59.f)));
     this->Input_1.setOrigin((sf::Vector2f(192.f/2, 59.f/2)));
@@ -70,7 +77,7 @@ void PAUSE::update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, flo
 }
 void PAUSE::setup_newPAUSE(float posi_x, float posi_y, float mouse_x, float mouse_y)
 {
-    this->PauseBuffer.clear(sf::Color::Transparent);
+    this->PauseBuffer.clear(sf::Color{0, 0, 0, 127});
     this->PauseBuffer.draw(this->PauseBase);
     if(isResumeSEL(mouse_x, mouse_y, Input_1))
     {
