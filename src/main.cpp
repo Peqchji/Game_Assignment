@@ -7,16 +7,14 @@
 #include "ITEM.h"
 #include "PAUSE.h"
 #include "MENU.h"
-//#include "CAL_Results.h"
+#include "CAL_Results.h"
 
 int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score);
 
 int main()
 {   
-    //RESULTS cal_score;
     std::string playerClass("Rogue");
 
-    //cal_score.sorting();
     int gameState = 0;
     //ShowWindow(GetConsoleWindow(), SW_HIDE);
     sf::Image icon;
@@ -36,15 +34,10 @@ int main()
 
     while(window.isOpen())
     {
-        switch(gameState)
-        {
-            case 0:
-                Gameplay(playerClass, window, view, font_V1, font_V2, score);
-                break;
-            default:
-                break;
-        }
+        Gameplay(playerClass, window, view, font_V1, font_V2, score);
+        break;
     }
+    return 0;
 }
 
 int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score)
@@ -57,6 +50,8 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     bool InResults = false;
     bool InMenu = true;
     int MenuSel = 0;
+
+    bool init_gameplay = true;
     //std::string player_class = PlayerType;
 
     enum {RUNNING, PAUSING, GAMEOVER};
@@ -115,37 +110,9 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
 
     bool toggleCLK = false;
 
-    //##Setup Global Logic##
-    world.CreateWorld(RoomIn_A_Map);
-    gameLogic.RandomRoomType(RoomIn_A_Map);
 
-    player.setPlayer_attribute(PlayerType);
-
-    //First time set up
-    view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
-    player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-
-    weapon[0].init_Gun(std::string("Pistol"), player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
-    weapon[1].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
-
-    for(i = 0; i < RoomIn_A_Map + 1; i++)
-    {
-        if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
-        {
-            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-        }
-    }
-
-    portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
-
-    for(i = 0; i < RoomIn_A_Map + 1 ; i++)
-    {
-        if (gameLogic.roomType[i].compare("ChestRoom") == 0)
-        {
-            gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-        }
-    }
     MENU menu(font1, font2);
+    RESULTS cal_score(font1, font2);
     //##GAME LOOP##
     while (IsOpen)
     {
@@ -169,45 +136,22 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                     {
                         currentGun = (currentGun+1) % 2;
                     }
+                    if (ev.key.code == sf::Keyboard::Backspace && menu.playerNameContrainer.length() > 0 && MenuSel == 1)
+                    {
+						menu.playerNameContrainer.pop_back();
+					}
+					if (ev.key.code == sf::Keyboard::Enter || ev.key.code == sf::Keyboard::Space && MenuSel == 1) {
+						break;
+					}
+                    break;
+                case sf::Event::TextEntered:
+				    if (MenuSel == 1 && ev.text.unicode < 122 && ev.text.unicode > 33 && menu.playerNameContrainer.length() <= 15)
+                    {
+						menu.playerNameContrainer.push_back(ev.text.unicode);
+				    }
                     break;
             }
         }
-        if(InMenu)
-        {
-            enum{MAINMENU, LEADERBOARD, EXIT};
-            //view.setCenter(::ScreenWidth/2.f, ::ScreenHeight/2.f);
-
-            float init_x = 0;
-            float init_y = 0;
-            window.setView(window.getDefaultView());
-            mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
-            menu.update(init_x, init_y, mousePosi.x, mousePosi.y, InMenu, InGame, MenuSel);
-            
-            window.clear(sf::Color::Transparent);
-            //window.setView(view);
-            if(MenuSel == MAINMENU)
-            {
-                window.draw(menu.MenuSprite);
-            }
-            else if(MenuSel == EXIT)
-            {
-                window.close();
-                IsOpen = false;
-            }
-            window.display();
-        }
-        else if(InGame)
-        {
-        if(player.current_Health == 0)
-            {
-            mode = GAMEOVER;
-            toggleCLK = true;
-            }
-        //## GAME LOGIC process ##
-        // Input Handle
-            // NW NE SW SE
-            //////////////////////////////////////////////////////////////////////////////////
-            // Pre-Update
         if(toggleCLK)
         {
             if(mode == PAUSING)
@@ -244,6 +188,78 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             toggleCLK = false;
         }
         toggleCLK = false;
+
+        if(InMenu)
+        {
+            enum{MAINMENU, SELECTCLASS, LEADERBOARD, EXITGAME};
+            //view.setCenter(::ScreenWidth/2.f, ::ScreenHeight/2.f);
+
+            float init_x = 0;
+            float init_y = 0;
+            window.setView(window.getDefaultView());
+            mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
+            menu.update(init_x, init_y, mousePosi.x, mousePosi.y, InMenu, InGame, MenuSel);
+            
+            window.clear(sf::Color::Transparent);
+            //window.setView(view);
+            window.draw(menu.MenuSprite);
+
+            window.display();
+            std::string playerClass[3] = {"Knight", "Rogue", "Priest"};
+            PlayerType = playerClass[menu.ClassSEL];
+            
+            if(MenuSel == EXITGAME)
+            {
+                window.close();
+                IsOpen = false;
+            }
+            mode = RUNNING;
+            init_gameplay = true;
+        }
+        else if(InGame)
+        {
+            if(init_gameplay)
+            {
+                RoomCleared = 0;
+                RoomIn_A_Map = 5;
+                HardnessMultiplier = 0;
+                world.CreateWorld(RoomIn_A_Map);
+                gameLogic.RandomRoomType(RoomIn_A_Map);
+                player.setPlayer_attribute(PlayerType);
+                //First time set up
+                view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                weapon[0].init_Gun(std::string("Pistol"), player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
+                weapon[1].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
+                for(i = 0; i < RoomIn_A_Map + 1; i++)
+                {
+                    if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                    {
+                        gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                    }
+                }
+                portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
+                for(i = 0; i < RoomIn_A_Map + 1 ; i++)
+                {
+                    if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+                    {
+                        gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                    }
+                }
+                init_gameplay = false;
+            }
+            else
+            {
+        if(player.current_Health == 0)
+        {
+            mode = GAMEOVER;
+            toggleCLK = true;
+        }
+        //## GAME LOGIC process ##
+        // Input Handle
+            // NW NE SW SE
+            //////////////////////////////////////////////////////////////////////////////////
+            // Pre-Update
         mousePosi = window.mapPixelToCoords(mouse.getPosition(window));
         playerPosi = {player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y};
         current_PlayerPosi_RoomID = world.CurrentPlayerGrid(playerPosi.x, playerPosi.y, RoomIn_A_Map);
@@ -447,11 +463,33 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                     }
                 }
             lastGun = gunType;
-        }
+            }
         else if(mode == PAUSING)
         {
-            pause.update(playerPosi.x, playerPosi.y, mousePosi.x, mousePosi.y, toggleCLK, InGame);
+            int changer;
+            pause.update(playerPosi.x, playerPosi.y, mousePosi.x, mousePosi.y, toggleCLK, changer);
+            
+            if(changer == 3)
+            {
+                mode = GAMEOVER;
+            }
         } 
+        else if(mode == GAMEOVER)
+        {
+            cal_score.update(playerPosi.x, playerPosi.y, mousePosi.x, mousePosi.y, toggleCLK, InGame, score);
+            if(InGame == false)
+            {
+                cal_score.sorting(menu.playerNameContrainer, score);
+                MenuSel = 2;
+                world.AllClear();
+                Enemies.clear();
+                Chests.clear();
+                items.clear();
+                cal_score.currentAnimation = 0;
+                mode = RUNNING;
+            }
+        }
+            }
             //##Render##
             // clear old frame before render new one
                 window.clear(sf::Color::Transparent);
@@ -533,46 +571,33 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                 if(mode == RUNNING)
                 {
                     window.draw(gui.currentGUI);
+                    MenuSel = 0;
                 }
                 else if(mode == PAUSING)
                 {
                     window.draw(pause.PauseSprite);
                 }
+                else if(mode == GAMEOVER)
+                {
+                    window.draw(cal_score.currentCAL_SCORE);
+                }
                 window.setView(window.getDefaultView());
             // Done Draw and Display
                 window.display();
-            
             }
         else if(!InGame && !InMenu)
         {
             InMenu = true;
-            toggleCLK = true;
             player.current_Ammor = player.player_Ammor;
             RoomIn_A_Map = 5;
+            score = 0;
             HardnessMultiplier = 0;
             world.AllClear();
-            world.CreateWorld(RoomIn_A_Map);
-            gameLogic.RandomRoomType(RoomIn_A_Map);
             Enemies.clear();
             Chests.clear();
             items.clear();
-            for(i = 0; i < RoomIn_A_Map ; i++)
-            {
-                if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
-                {
-                    gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-                }
-            }
-            view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
-            player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-            portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
-            for(i = 0; i < RoomIn_A_Map + 1 ; i++)
-            {
-                if (gameLogic.roomType[i].compare("ChestRoom") == 0)
-                {
-                    gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-                }
-            }
+            gunType = "Pistol";
+            menu.playerNameContrainer.clear();
         }
     }
     return 0;

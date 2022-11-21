@@ -73,7 +73,7 @@ bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamag
 {
     bool isHit = false;
     int RNDcrit = rand()%100 + 1;
-    float critChance = playerCrit + gunCrit;
+    float critChance = playerCrit*2 + gunCrit;
     float damageMultiplier = RNDcrit < critChance? 1.5: 1;
     float amountDamage =  ReceivedDamage * damageMultiplier;
     if(BulletCollision(Bullet, Amount_Bullet))

@@ -63,7 +63,7 @@ PAUSE::PAUSE(sf::Font &fontV1, sf::Font &fontV2)
         this->InputBlock[i].setScale(192.f/46, 59.f/13);
     }
 }
-void PAUSE::update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, float &mousePosi_y, bool &Toggle, bool &Running)
+void PAUSE::update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, float &mousePosi_y, bool &Toggle, int &RunningMode)
 {
     if(isResumeSEL(mousePosi_x, mousePosi_y, Input_1) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -71,7 +71,7 @@ void PAUSE::update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, flo
     }
     if(isResumeSEL(mousePosi_x, mousePosi_y, Input_2) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        Running = false;
+        RunningMode = 3;
     }
     setup_newPAUSE(InitPosi_x, InitPosi_y, mousePosi_x, mousePosi_y);
 }
@@ -81,7 +81,7 @@ void PAUSE::setup_newPAUSE(float posi_x, float posi_y, float mouse_x, float mous
     this->PauseBuffer.draw(this->PauseBase);
     if(isResumeSEL(mouse_x, mouse_y, Input_1))
     {
-        this->InputSelected.setPosition(sf::Vector2f(520.f, 292.f));
+        this->InputSelected.setPosition(sf::Vector2f(520.f, 293.f));
         this->PauseBuffer.draw(this->InputSelected);
     }
     else

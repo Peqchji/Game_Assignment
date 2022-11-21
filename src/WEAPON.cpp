@@ -30,8 +30,8 @@ void WEAPON::update(float Posi_x, float Posi_y, float dir_x, float dir_y)
   this->GunModel.setPosition(Posi_x - Direction, Posi_y - 5);
   rotate_Gun_By = ((static_cast<double>(atan(-dir_x/dir_y)) * 180)/3.14159265) + (dir_y > 0? 180:0) - 90;
   this->GunModel.setRotation(rotate_Gun_By);
-  this->bulletGenPosi.x = GunModel.getPosition().x + ((MuzzelPoint.x + 5) * dir_x * scaledown_sprite);
-  this->bulletGenPosi.y = GunModel.getPosition().y + ((MuzzelPoint.x + 5) * dir_y * scaledown_sprite) ;
+  this->bulletGenPosi.x = GunModel.getPosition().x + ((MuzzelPoint.x) * dir_x * scaledown_sprite);
+  this->bulletGenPosi.y = GunModel.getPosition().y + ((MuzzelPoint.x) * dir_y * scaledown_sprite) ;
 
 }
 

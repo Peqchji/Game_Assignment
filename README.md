@@ -9,8 +9,8 @@
 		🟢 Floor load and draw
 		🟢 Wall load and draw
 		🟢 Wall collision
-	🟡 Menu or HUB and pause system
-	🟡 leaderboard
+	🟢 Menu or HUB and pause system
+	🟢 leaderboard
 	🟢 UI
 		🟢 GUI Interact with other logics
 		🟢 Text in GUI 
