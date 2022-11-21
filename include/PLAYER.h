@@ -60,9 +60,10 @@ class PLAYER{
         void setZeroVelocity();
         void update(float dir_x);
         void PlayerCollision(short currentRoom, std::vector<std::vector<sf::RectangleShape>> &Wall);
-        void Skillcast(float &multiFireRate);
+        bool Skillcast(float &multiFireRate);
         void ToggleCLK();
         sf::Time Cooldown_Skill;
+
 
     private:
         std::map<std::string, struct PlayerClassAttibute> PlayerClass;

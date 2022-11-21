@@ -67,6 +67,9 @@ class MENU{
                 sf::Sprite ChestSprite;
                 sf::Texture Chest;
 
+                sf::Sprite Spritebackground;
+                sf::Texture MenuBasebackground;
+
                 void setup_newMENU(float posi_x, float posi_y, float mousePosi_x, float mousePosi_y, int State);
                 bool isSELECT(float Posi_x, float Posi_y, sf::RectangleShape  &Container);
                 void file_LeaderBoardReader();

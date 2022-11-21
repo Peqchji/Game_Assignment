@@ -1,7 +1,6 @@
 #include <ITEM.h>
 ITEM::ITEM(std::string Type,  float init_Posi_x, float init_Posi_y)
 {
-
     if(Type.compare("Potion") == 0 || Type.compare("EnergyPotion") == 0 || Type.compare("HpPotion") == 0)
     {
         setPotionAttribute();

@@ -28,6 +28,11 @@ class ENEMY
         sf::Vector2f Position;
         sf::Sprite EnemySprite;
 
+
+        bool Alert;
+        bool lastAlertState;
+        bool tiggerAlert;
+
         float Enemy_damage;
         float Enemy_Speed;
         float Enemy_Health;

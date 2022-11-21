@@ -15,6 +15,7 @@ class BULLET
         sf::Time AnimationTimer;
         sf::Vector2f Spritesize;
 
+
     public:
         float bulletDamage;
         sf::Sprite bulletShape;

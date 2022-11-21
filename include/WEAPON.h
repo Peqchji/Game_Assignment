@@ -16,8 +16,9 @@ class WEAPON
             sf::Vector2f Muzzel;
             sf::Vector2f Holding;
             sf::Texture Texture;
+            sf::SoundBuffer sound;
 
-            GunAttribute(float _Damage, short _EnergyCost, short _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture)
+            GunAttribute(float _Damage, short _EnergyCost, short _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture, std::string _sound)
             {
                 Damage = _Damage;
                 EnergyCost = _EnergyCost;
@@ -26,6 +27,7 @@ class WEAPON
                 Muzzel = _MuzzelPosi;
                 Holding = _HoldingPosi;
                 Texture.loadFromFile(_GunTexture);
+                sound.loadFromFile(_sound);
             }
         };
 
@@ -51,8 +53,12 @@ class WEAPON
         std::map<std::string, struct GunAttribute> GunType;
         std::map<std::string, struct GunAttribute>::iterator it;
     private:
+
+        sf::SoundBuffer shootingBuffer;
+        sf::Sound shooting;
         void setGunType();
         int gatlingState = 0;
         int gatlingCounter;
+
 };
 #endif

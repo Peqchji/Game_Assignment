@@ -8,15 +8,24 @@
 #include "PAUSE.h"
 #include "MENU.h"
 #include "CAL_Results.h"
+#include "SFX.h"
 
 int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score);
 
 int main()
 {   
     std::string playerClass("Rogue");
+    sf::SoundBuffer backGroundMusicBuffer;
+    sf::Sound backGroundMusic;
+    backGroundMusicBuffer.loadFromFile("../content/backGroundMusic.wav");
+    backGroundMusic.setBuffer(backGroundMusicBuffer);
+    backGroundMusic.setLoop(true);
+    backGroundMusic.setVolume(30);
+    backGroundMusic.play();
+
 
     int gameState = 0;
-    //ShowWindow(GetConsoleWindow(), SW_HIDE);
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
     sf::Image icon;
     icon.loadFromFile("Icon.png");
     sf::RenderWindow window(sf::VideoMode(ScreenWidth, ScreenHeight), "Let's Me Out: The Dungeon", sf::Style::Titlebar | sf::Style::Close);
@@ -75,6 +84,8 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     std::vector<ITEM*> items;
     Portal portal;
     WEAPON weapon[2];
+
+    SFXClass sfx;
 
     GUI gui(font1, font2);
     
@@ -274,6 +285,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             {
                 if(portal.isPlayerNearPortalOut(player.Hitbox.getPosition()))
                 {
+                    sfx.PortalActive.play();
                     player.current_Ammor = player.player_Ammor;
                     RoomCleared = (RoomCleared + 1) % 3;
                     if(RoomCleared == 2 && RoomIn_A_Map < 12)
@@ -308,6 +320,12 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             }   
             if((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||  sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
             {   
+                sfx.walking_Timer = sfx.walking_CLK.getElapsedTime();
+   		        if(sfx.walking_Timer.asMilliseconds() > sfx.walkingbuffer.getDuration().asMilliseconds())
+   		        {
+			        sfx.walking.play();
+			        sfx.walking_CLK.reset(true);
+   		        }
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
                 {
                     player.velocity.y += -(player.current_Speed * dt) / sqrt(2.f);
@@ -346,7 +364,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                     player.velocity.x += player.current_Speed * dt;
                 }
             }
-            player.Skillcast(increaseFireRate);
+            if(player.Skillcast(increaseFireRate))
+            {
+                sfx.castSkill.play();
+            }
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && bullet_Timer.asMilliseconds()*increaseFireRate > weapon[currentGun].FireRate && ((player.current_Energy - weapon[currentGun].Cost) >= 0))
             {
                 Timer_FireRate.reset(true);
@@ -375,6 +396,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                                     weapon[1].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
                                     pickedUp = true;
                                 }
+                                sfx.PickupItem.play();
                                 items.erase(it_item);
                         }
                         }
@@ -401,13 +423,19 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                             if(player.current_Ammor > 0)
                             {
                                 player.current_Ammor -= Enemy->Enemy_damage;
+                                sfx.sheildBlock.play();
                             }
                             else
                             {
                                 player.current_Health -= Enemy->Enemy_damage;
+                                sfx.takeDamage.play();
                             }
                         }
                         Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
+                        if(Enemy->tiggerAlert)
+                        {
+                            sfx.EnemyAlert.play();
+                        }
                         if(Enemy->Enemy_Health <= 0)
                         {
                             score += Enemy->Enemy_Score;
@@ -416,8 +444,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                             {
                                 items.push_back(new ITEM("EnergyPotion", Enemy->Position.x,  Enemy->Position.y));
                             }
-                        Enemies.erase(it_enemy);
+                            Enemies.erase(it_enemy);
+                            sfx.EnemyDeath.play();
                         }
+                        bool hitcheck = false;
                         if(bullets.size() > 0)
                         {
                             for(auto *bullet: bullets)
@@ -427,6 +457,11 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                                 {
                                     if(Enemy->getHitted(bullet->bulletShape , bullets.size(), bullet->bulletDamage, player.current_Crit_Chance, weapon[currentGun].Crit))
                                     {
+                                        if(!hitcheck)
+                                        {
+                                            hitcheck = true;
+                                            sfx.EnemyPain.play();
+                                        }
                                         bullets.erase(it);
                                     }
                                 }
@@ -445,6 +480,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                             bullet->update(dt);
                             if(bullet->bulletCollision(world.Wall) || bullet->bulletLifeTime())
                             {
+                                sfx.bulletWallhit.play();
                                 bullets.erase(it);
                             }
                         }
@@ -457,12 +493,14 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                         Chests[i]->update(player.Hitbox.getPosition());
                         if(Chests[i]->SpawnItem)
                         {
+                            sfx.Chestopen.play();
                             items.push_back(new ITEM((rand()%2 == 0? "Potion":"Gun"), Chests[i]->ChestSprite.getPosition().x,  Chests[i]->ChestSprite.getPosition().y - 5.f));
                             Chests[i]->SpawnItem = false;
                         }
                     }
                 }
             lastGun = gunType;
+            MenuSel = 0;
             }
         else if(mode == PAUSING)
         {
@@ -480,13 +518,13 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             if(InGame == false)
             {
                 cal_score.sorting(menu.playerNameContrainer, score);
-                MenuSel = 2;
                 world.AllClear();
                 Enemies.clear();
                 Chests.clear();
                 items.clear();
                 cal_score.currentAnimation = 0;
                 mode = RUNNING;
+                MenuSel = 2;
             }
         }
             }
@@ -571,7 +609,6 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                 if(mode == RUNNING)
                 {
                     window.draw(gui.currentGUI);
-                    MenuSel = 0;
                 }
                 else if(mode == PAUSING)
                 {

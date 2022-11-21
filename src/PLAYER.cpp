@@ -184,8 +184,9 @@ void PLAYER::setPlayerClass()
   };
 }
 
-void PLAYER::Skillcast(float &multiFireRate)
+bool PLAYER::Skillcast(float &multiFireRate)
 {
+	bool results = false;
 	this->Cooldown_Skill = this->Skill_CLK.getElapsedTime();
 	if(this->Cooldown_Skill.asMilliseconds() >= Cooldown)
 	{
@@ -195,6 +196,7 @@ void PLAYER::Skillcast(float &multiFireRate)
 	{
 		this->Duration_CLK.reset(true);
 		skillActivate = true;
+		results = true;
 	}
 	this->Duration_Skill = this->Duration_CLK.getElapsedTime();
 	if(skillActivate && Duration_Skill.asMilliseconds() <= skillDuration)
@@ -221,6 +223,7 @@ void PLAYER::Skillcast(float &multiFireRate)
 		current_Crit_Chance = player_Crit_Chance;
 		healing = 0;
 	}
+	return results;
 }
 
 void PLAYER::ToggleCLK()

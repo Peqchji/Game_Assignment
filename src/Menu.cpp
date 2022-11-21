@@ -38,7 +38,7 @@ MENU::MENU(sf::Font &fontV1, sf::Font &fontV2)
 
     this->GameName.setFont(FontLarge);
     this->GameName.setCharacterSize(72.f);
-    this->GameName.setFillColor(sf::Color{190, 190, 190, 255});
+    this->GameName.setFillColor(sf::Color{255, 215, 0, 255});
     this->GameName.setString("Let's Me Out: The Dungeon");
     this->GameName.setOrigin(sf::Vector2f(GameName.getLocalBounds().left + GameName.getLocalBounds().width/2.f, (GameName.getLocalBounds().top + GameName.getLocalBounds().height)/2.f));
     this->GameName.setPosition(::ScreenWidth/2.f, (GameName.getLocalBounds().top + GameName.getLocalBounds().height));
@@ -87,6 +87,12 @@ MENU::MENU(sf::Font &fontV1, sf::Font &fontV2)
     this->Input_1.setSize(sf::Vector2f((Start.getLocalBounds().left + Start.getLocalBounds().width), (Start.getLocalBounds().top + Start.getLocalBounds().height)));
     this->Input_1.setPosition(50.f, 299.f);
     this->Input_1.setOrigin(sf::Vector2f((Start.getLocalBounds().left), (Start.getLocalBounds().top + Start.getLocalBounds().height)/2.f));
+
+    this->MenuBasebackground.loadFromFile("../content/GUI/Pause.png");
+    this->Spritebackground.setTexture(MenuBasebackground);
+    this->Spritebackground.setOrigin(sf::Vector2f(MenuBasebackground.getSize().x/2.f, MenuBasebackground.getSize().y/2.f));
+    this->Spritebackground.setPosition(::ScreenWidth/2.f + 15, 535.f);
+    this->Spritebackground.setScale(1179.f/43, 1206.f/44);
 
     this->MenuBaseTexture.loadFromFile("../content/Menu.png");
     this->MenuBase.setTexture(MenuBaseTexture);
@@ -214,7 +220,7 @@ MENU::MENU(sf::Font &fontV1, sf::Font &fontV2)
         this->scoreInfoText[i].setFont(FontLarge);
         this->scoreInfoText[i].setCharacterSize(36.f);
         this->scoreInfoText[i].setFillColor(sf::Color::White);
-        this->scoreInfoText[i].setPosition(::ScreenWidth/3.f , 180.f + i * 75);
+        this->scoreInfoText[i].setPosition(::ScreenWidth/4.f , 180.f + i * 75);
         this->scoreInfoText[i].setOutlineColor(sf::Color::Black);
         this->scoreInfoText[i].setOutlineThickness(4.f);
         this->scoreInfoText[i].setOrigin(0, (scoreInfoText[i].getLocalBounds().top + scoreInfoText[i].getLocalBounds().height)/2.f);
@@ -340,6 +346,7 @@ void MENU::update(float &InitPosi_x, float &InitPosi_y, float &mousePosi_x, floa
 void MENU::setup_newMENU(float posi_x, float posi_y, float mousePosi_x, float mousePosi_y, int State)
 {
     this->MenuBuffer.clear(sf::Color::Blue);
+    this->MenuBuffer.draw(this->Spritebackground);
     this->MenuBuffer.draw(this->MenuBase);
     if(State == 0)
     {
