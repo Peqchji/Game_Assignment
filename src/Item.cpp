@@ -86,6 +86,7 @@ void ITEM::setGunAttribute()
                     {"Pistol", GunAttribute("../content/Gun/Sprite/Pistol.png")},
                     {"Desert Eagle", GunAttribute("../content/Gun/Sprite/Desert_Eagle.png")},
                     {"AK-47", GunAttribute("../content/Gun/Sprite/AK-47.png")},
+                    {"Elite AR", GunAttribute("../content/Gun/Sprite/Elite_AR.png")},
                     {"car-SMG", GunAttribute("../content/Gun/Sprite/car-SMG.png") },
                     {"NP-9", GunAttribute("../content/Gun/Sprite/NP9.png")},
                     {"Shotgun", GunAttribute("../content/Gun/Sprite/Shotgun.png")},

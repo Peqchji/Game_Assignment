@@ -30,7 +30,6 @@ class ENEMY
 
 
         bool Alert;
-        bool lastAlertState;
         bool tiggerAlert;
 
         float Enemy_damage;

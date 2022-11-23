@@ -96,6 +96,15 @@ void PLAYER::update(float dir_x)
    this->CharModel.move(this->velocity.x, this->velocity.y);
    this->Hitbox.move(this->velocity.x, this->velocity.y);
  }
+void PLAYER::LevelUping(int Upgrade)
+{
+	Cooldown /= static_cast<float>(pow(1.05, Upgrade));
+	current_Speed *= static_cast<float>(pow(1.03, Upgrade));;
+	player_Health += static_cast<float>(1 * floor(static_cast<float>(Upgrade)/2.f));
+	player_Ammor += 1;
+	player_Energy *= static_cast<float>(pow(1.1, Upgrade));
+	current_Crit_Chance += Upgrade;
+}
 
 void PLAYER::setZeroVelocity()
  {

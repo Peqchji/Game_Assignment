@@ -10,11 +10,9 @@
 #include "CAL_Results.h"
 #include "SFX.h"
 
-int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score);
-
 int main()
-{   
-    std::string playerClass("Rogue");
+{
+    std::string PlayerType("Rogue");
     sf::SoundBuffer backGroundMusicBuffer;
     sf::Sound backGroundMusic;
     backGroundMusicBuffer.loadFromFile("../content/backGroundMusic.wav");
@@ -35,39 +33,29 @@ int main()
     sf::View view;
     view.setSize(ScreenWidth/ScaleUp, ScreenHeight/ScaleUp);
 
-    sf::Font font_V1;
-    font_V1.loadFromFile("../content/GUI/MinimalPixelFont.ttf");
-    sf::Font font_V2;
-    font_V2.loadFromFile("../content/GUI/MinimalPixel v2.ttf");
+    sf::Font font1;
+    font1.loadFromFile("../content/GUI/MinimalPixelFont.ttf");
+    sf::Font font2;
+    font2.loadFromFile("../content/GUI/MinimalPixel v2.ttf");
     unsigned int score =  0;
 
-    while(window.isOpen())
-    {
-        Gameplay(playerClass, window, view, font_V1, font_V2, score);
-        break;
-    }
-    return 0;
-}
-
-int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, sf::Font &font1,  sf::Font &font2, unsigned int &score)
-{
     int x, y, i;
     short RoomIn_A_Map = 5;
     short RoomCleared = 0;
-    bool IsOpen = true;
+    //bool IsOpen = true;
     bool InGame = false;
     bool InResults = false;
     bool InMenu = true;
     int MenuSel = 0;
 
-    bool init_gameplay = true;
+    bool init_gameplay = false;
     //std::string player_class = PlayerType;
 
     enum {RUNNING, PAUSING, GAMEOVER};
     int mode = 0;
 
 
-    int current_PlayerPosi_RoomID;
+    int current_PlayerPosi_RoomID = 0;
     int room_id;
 
     bool EnableEnemiesCLK = false;
@@ -78,6 +66,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     PLAYER player;
     std::vector<ENEMY*> Enemies;
     float HardnessMultiplier = 0;
+    float PlayerLevelUp = 0;
 
     std::vector<CHEST*> Chests;
     std::vector<BULLET*> bullets;
@@ -115,6 +104,8 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
     bool pickedUp = false;
     float increaseFireRate = 1;
 
+    int debugGun = 0;
+
     //Clock
     float dt;
     sftools::Chronometer dt_clock;
@@ -124,8 +115,11 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
 
     MENU menu(font1, font2);
     RESULTS cal_score(font1, font2);
+
     //##GAME LOOP##
-    while (IsOpen)
+    int changer;
+
+    while(window.isOpen())
     {
         //event
         //////////////////////////////////DEBUGGING TOOL//////////////////////////////////
@@ -134,15 +128,11 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             switch(ev.type)
             {
                 case sf::Event::Closed:
-                    IsOpen = false;
+                    window.close();
                     break;
                 /*case sf::Event::LostFocus:
                     break;*/
                 case sf::Event::KeyPressed:
-                    if(ev.key.code == sf::Keyboard::Escape && mode != GAMEOVER && !InMenu)
-                    {
-                        toggleCLK = true; 
-                    }
                     if(ev.key.code == sf::Keyboard::R && mode == RUNNING)
                     {
                         currentGun = (currentGun+1) % 2;
@@ -152,7 +142,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
 						menu.playerNameContrainer.pop_back();
 					}
 					if (ev.key.code == sf::Keyboard::Enter || ev.key.code == sf::Keyboard::Space && MenuSel == 1) {
-						break;
+                    	break;
 					}
                     break;
                 case sf::Event::TextEntered:
@@ -199,7 +189,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             toggleCLK = false;
         }
         toggleCLK = false;
-
+    
         if(InMenu)
         {
             enum{MAINMENU, SELECTCLASS, LEADERBOARD, EXITGAME};
@@ -222,13 +212,48 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             if(MenuSel == EXITGAME)
             {
                 window.close();
-                IsOpen = false;
             }
             mode = RUNNING;
             init_gameplay = true;
         }
         else if(InGame)
         {
+            if(current_PlayerPosi_RoomID == RoomIn_A_Map)
+            {
+                if(portal.isPlayerNearPortalOut(player.Hitbox.getPosition()))
+                {
+                    sfx.PortalActive.play();
+                    player.current_Ammor = player.player_Ammor;
+                    RoomCleared = (RoomCleared + 1) % 3;
+                    if(RoomCleared == 2 && RoomIn_A_Map < 12)
+                    {
+                        RoomIn_A_Map += 1;
+                        PlayerLevelUp += 1;
+                        player.LevelUping(PlayerLevelUp);
+                    }
+                    HardnessMultiplier += 1;
+                    world.AllClear();
+                    world.CreateWorld(RoomIn_A_Map);
+                    gameLogic.RandomRoomType(RoomIn_A_Map);
+                    Enemies.clear();
+                    Chests.clear();
+                    items.clear();
+                    for(i = 0; i < RoomIn_A_Map ; i++)
+                    {
+                        if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
+                        {
+                            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                        }
+                        else if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+                        {
+                            gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
+                        }
+                    }
+                    view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                    player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
+                    portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
+                }
+            }   
             if(init_gameplay)
             {
                 RoomCleared = 0;
@@ -237,7 +262,6 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                 world.CreateWorld(RoomIn_A_Map);
                 gameLogic.RandomRoomType(RoomIn_A_Map);
                 player.setPlayer_attribute(PlayerType);
-                //First time set up
                 view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
                 player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
                 weapon[0].init_Gun(std::string("Pistol"), player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
@@ -248,15 +272,12 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                     {
                         gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
                     }
-                }
-                portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
-                for(i = 0; i < RoomIn_A_Map + 1 ; i++)
-                {
-                    if (gameLogic.roomType[i].compare("ChestRoom") == 0)
+                    else if (gameLogic.roomType[i].compare("ChestRoom") == 0)
                     {
                         gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
                     }
                 }
+                portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
                 init_gameplay = false;
             }
             else
@@ -281,43 +302,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             AimDir = mousePosi - MiddleOfWin;
             AimDir_Normal = AimDir / static_cast<float>(sqrt(pow(AimDir.x, 2) + pow(AimDir.y, 2)));
             bullet_Timer = Timer_FireRate.getElapsedTime();
-            if(current_PlayerPosi_RoomID == RoomIn_A_Map)
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && mode == RUNNING)
             {
-                if(portal.isPlayerNearPortalOut(player.Hitbox.getPosition()))
-                {
-                    sfx.PortalActive.play();
-                    player.current_Ammor = player.player_Ammor;
-                    RoomCleared = (RoomCleared + 1) % 3;
-                    if(RoomCleared == 2 && RoomIn_A_Map < 12)
-                    {
-                        RoomIn_A_Map += 1;
-                    }
-                    HardnessMultiplier += 1;
-                    world.AllClear();
-                    world.CreateWorld(RoomIn_A_Map);
-                    gameLogic.RandomRoomType(RoomIn_A_Map);
-                    Enemies.clear();
-                    Chests.clear();
-                    items.clear();
-                    for(i = 0; i < RoomIn_A_Map ; i++)
-                    {
-                        if (gameLogic.roomType[i].compare("EnemyRoom") == 0)
-                        {
-                            gameLogic.SpawnEnemies(RoomIn_A_Map, Enemies, HardnessMultiplier, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-                        }
-                    }
-                    view.setCenter(world.SpawnPointPos.x, world.SpawnPointPos.y);
-                    player.setPlayerSpawnPos(world.SpawnPointPos.x, world.SpawnPointPos.y);
-                    portal.setupPortal(world.SpawnPoint_Posi.Grid_col, world.SpawnPoint_Posi.Grid_row, world.PortalRoom_Posi.Grid_col, world.PortalRoom_Posi.Grid_row);
-                    for(i = 0; i < RoomIn_A_Map + 1 ; i++)
-                    {
-                        if (gameLogic.roomType[i].compare("ChestRoom") == 0)
-                        {
-                            gameLogic.SpawnChest(Chests, world.Field_Posi[i].Grid_col, world.Field_Posi[i].Grid_row);
-                        }
-                    }
-                }
-            }   
+                toggleCLK = true; 
+            }  
             if((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||  sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
             {   
                 sfx.walking_Timer = sfx.walking_CLK.getElapsedTime();
@@ -391,12 +379,12 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                         {
                         if(Element_item->isItemPickedUp(player.Hitbox, player.current_Health, player.current_Energy, gunType))
                         {
+                                sfx.PickupItem.play();
                                 if(Element_item->itemType.compare("Gun") == 0)
                                 {
                                     weapon[1].init_Gun(gunType, player.collisionHitbox.getPosition().x, player.collisionHitbox.getPosition().y);
                                     pickedUp = true;
                                 }
-                                sfx.PickupItem.play();
                                 items.erase(it_item);
                         }
                         }
@@ -432,9 +420,10 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
                             }
                         }
                         Enemy->update(dt, world.CurrentEnemyGrid(Enemy->Position.x, Enemy->Position.y, RoomIn_A_Map), playerPosi, world.Wall);
-                        if(Enemy->tiggerAlert)
+                        if(Enemy->tiggerAlert && Enemy->Alert)
                         {
                             sfx.EnemyAlert.play();
+                            Enemy->tiggerAlert = false;
                         }
                         if(Enemy->Enemy_Health <= 0)
                         {
@@ -504,7 +493,7 @@ int Gameplay(std::string &PlayerType, sf::RenderWindow &window, sf::View &view, 
             }
         else if(mode == PAUSING)
         {
-            int changer;
+            changer = 0;
             pause.update(playerPosi.x, playerPosi.y, mousePosi.x, mousePosi.y, toggleCLK, changer);
             
             if(changer == 3)

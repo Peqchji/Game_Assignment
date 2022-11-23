@@ -37,8 +37,8 @@ ENEMY::ENEMY(float Hardness,  float init_Posi_x, float init_Posi_y)
         this->MovementCLK.reset(true);
 
         active = true;
-        Alert = true;
-        lastAlertState = false;
+        Alert = false;
+        tiggerAlert = true;
     }
 }
 
@@ -54,14 +54,6 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
     
     if(playerDetected(playerposi) && active)
     {
-        if(Alert != lastAlertState)
-        {
-            tiggerAlert = true;
-        }
-        else
-        {
-            tiggerAlert = false;
-        }
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + 4 + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
         if(EntityType.compare("toxicSlime") == 0)
         {
@@ -71,14 +63,14 @@ void ENEMY::update(float &dt, short currentRoom,sf::Vector2f &playerposi, std::v
         {
            NormalInteract(dt, playerposi, WallHitbox);
         }
+         Alert = true;
     }
     else
     {
+        Alert = false;
         MovementCLK.reset(true);
-        tiggerAlert = true;
         this->EnemySprite.setTextureRect(sf::IntRect(this->TextureSize.x * (EnemyAnimation + (dir_normal.x<0? 1:0)), 0, (dir_normal.x<0? -1:1) * this->TextureSize.x, this->TextureSize.y));
     }
-    lastAlertState = Alert;
 }
 
 bool ENEMY::getHitted(sf::Sprite &Bullet, int Amount_Bullet, float ReceivedDamage, float playerCrit, float gunCrit)
@@ -261,6 +253,7 @@ bool ENEMY::Hitting(sf::RectangleShape &playerHitbox)
     if(!active && AttackTimer.asMilliseconds() >= 2000/HardnessMultiply)
     {
         active = true;
+        tiggerAlert = true;
     }
     return false;
 }

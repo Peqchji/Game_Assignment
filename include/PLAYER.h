@@ -59,6 +59,7 @@ class PLAYER{
         void setPlayerSpawnPos(float SpawnPoint_x,float SpawnPoint_y);
         void setZeroVelocity();
         void update(float dir_x);
+        void LevelUping(int Upgrade);
         void PlayerCollision(short currentRoom, std::vector<std::vector<sf::RectangleShape>> &Wall);
         bool Skillcast(float &multiFireRate);
         void ToggleCLK();

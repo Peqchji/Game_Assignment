@@ -11,14 +11,14 @@ class WEAPON
             float Damage;
             float RoundPerSec;
             short EnergyCost;
-            short CritChance;
+            float CritChance;
 
             sf::Vector2f Muzzel;
             sf::Vector2f Holding;
             sf::Texture Texture;
             sf::SoundBuffer sound;
 
-            GunAttribute(float _Damage, short _EnergyCost, short _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture, std::string _sound)
+            GunAttribute(float _Damage, short _EnergyCost, float _CritChance, short _RoundPerSec, sf::Vector2f _MuzzelPosi, sf::Vector2f _HoldingPosi, std::string _GunTexture, std::string _sound)
             {
                 Damage = _Damage;
                 EnergyCost = _EnergyCost;
@@ -34,7 +34,7 @@ class WEAPON
         float Dealing_Damge;
         float FireRate;
         short Cost;
-        short Crit;
+        float Crit;
         double rotate_Gun_By;
 
         float scaledown_sprite = 0.5;

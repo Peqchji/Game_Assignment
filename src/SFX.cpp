@@ -15,7 +15,7 @@ SFXClass::SFXClass()
 
     this->PickupItemBuffer.loadFromFile("../content/Potion/pickUpItem.wav");
     this->PickupItem.setBuffer(this->PickupItemBuffer);
-    this->PickupItem.setVolume(80.f);
+    this->PickupItem.setVolume(100.f);
 
     this->walking_CLK.reset(true);
     this->sheildBlockbuffer.loadFromFile("../content/Sprite/SFX/player/SheildBlock.wav");

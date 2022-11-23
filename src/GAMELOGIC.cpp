@@ -1,10 +1,10 @@
 #include "GAMELOGIC.h"
-void GAMELOGIC::RandomRoomType(int AMOUNT_Room)
+void GAMELOGIC::RandomRoomType(short AMOUNT_Room)
 {
     int i;
     int room_id;
     int chestroomCreated = 0;
-    int Amount_ChestRoom = (AMOUNT_Room + 1) / 3;
+    short Amount_ChestRoom = (AMOUNT_Room + 1) / 3;
 
     roomType.clear();
     roomType.push_back(std::string("SpawnRoom"));

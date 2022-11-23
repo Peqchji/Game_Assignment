@@ -9,7 +9,7 @@ class GAMELOGIC
 {
     public:
         std::vector<std::string> roomType;
-        void RandomRoomType(int AMOUNT_Room);
+        void RandomRoomType(short AMOUNT_Room);
         void SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies,  float &HardMultiplier, float SpawnPosi_x, float SpawnPosi_y);
         void SpawnChest(std::vector<CHEST*> &Chest, short SpawnGrid_x, short SpawnGrid_y);
         
