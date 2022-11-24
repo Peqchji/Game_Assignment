@@ -18,9 +18,9 @@
 	🟢 Player class
 	🟢 Enemy Logic
 	🟢 Gun and Bullet logic
-	🟡 Movement
+	🟢 Movement
 		🟢 player movement
-		🟡 Enemy
+		🟢 Enemy 
 		🟢 bullet
 	🟢 Map Generate Logic
 	🟢 Screen
