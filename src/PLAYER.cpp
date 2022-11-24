@@ -98,12 +98,12 @@ void PLAYER::update(float dir_x)
  }
 void PLAYER::LevelUping(int Upgrade)
 {
-	Cooldown /= static_cast<float>(pow(1.05, Upgrade));
-	current_Speed *= static_cast<float>(pow(1.03, Upgrade));;
+	Cooldown /= static_cast<float>(pow(1.025, Upgrade));
+	current_Speed *= static_cast<float>(pow(1.01, Upgrade));;
 	player_Health += static_cast<float>(1 * floor(static_cast<float>(Upgrade)/2.f));
-	player_Ammor += 1;
-	player_Energy *= static_cast<float>(pow(1.1, Upgrade));
-	current_Crit_Chance += Upgrade;
+	player_Ammor += static_cast<float>(1 * floor(static_cast<float>(Upgrade)/2.f));
+	player_Energy  += 15;
+	current_Crit_Chance += Upgrade/2.f;
 }
 
 void PLAYER::setZeroVelocity()

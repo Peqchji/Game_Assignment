@@ -38,7 +38,7 @@ void GAMELOGIC::SpawnEnemies(int AMOUNT_Room, std::vector<ENEMY*> &Enemies,  flo
     int i;
     float init_Posi_x;
     float init_Posi_y;
-    int amountEnemy = AMOUNT_Room + rand()%3;
+    int amountEnemy = AMOUNT_Room * 1.5 + rand()%3;
     for(i = 0; i < amountEnemy; i++)
     {
         init_Posi_x = (SpawnGrid_x * ::GridPixelSize) + (::CellPixelSize * (10 + rand()%14));

@@ -126,7 +126,14 @@ void GUI::update(int &currentTool, sf::Texture &Gun_no1, sf::Texture &Gun_no2, s
     moveSel();
     this->HPbar.setScale(currentHP/MaxHP * progess_bar_x, progess_bar_y);
     this->Energybar.setScale(currentEnergy/MaxEnergy * progess_bar_x, progess_bar_y);
-    this->CoolDownStat.setScale(currentCooldown/MaxCooldown * cooldown_bar_x, cooldown_bar_y);
+    if(currentCooldown > MaxCooldown)
+    {
+        this->CoolDownStat.setScale(cooldown_bar_x, cooldown_bar_y);
+    }
+    else
+    {
+        this->CoolDownStat.setScale(currentCooldown/MaxCooldown * cooldown_bar_x, cooldown_bar_y);
+    }
 
     if(AmountSheild > 0)
     {

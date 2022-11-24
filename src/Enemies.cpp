@@ -94,8 +94,8 @@ void  ENEMY::setEnemyType()
 {
     EnemyType = 
   {
-    {"MiniDemon", EnemyAttribute(2.f, 15.f, 64.f, 100, std::string("Normal") ,std::string("../content/Sprite/MiniDemon.png"))},
-    {"Splinter", EnemyAttribute(2.f, 1.f, 114.f, 50, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))},
+    {"MiniDemon", EnemyAttribute(2.f, 15.f, 64.f, 75, std::string("Normal") ,std::string("../content/Sprite/MiniDemon.png"))},
+    {"Splinter", EnemyAttribute(2.f, 1.f, 124.f, 50, std::string("Normal") ,std::string("../content/Sprite/Splinter.png"))},
     {"toxicSlime", EnemyAttribute(3.f, 10.f, 74.f, 100, std::string("Normal") ,std::string("../content/Sprite/toxicSlime.png"))}
   };
 }
@@ -107,15 +107,15 @@ bool ENEMY::playerDetected(sf::Vector2f playerPosi)
     int detection_Dist;
     if(EntityType.compare("Splinter") == 0)
     {
-        detection_Dist = 10;
+        detection_Dist = 12;
     }
     else if(EntityType.compare("toxicSlime") == 0)
     {
-        detection_Dist = 8;
+        detection_Dist = 10;
     }
     else
     {
-        detection_Dist = 6;
+        detection_Dist = 8;
     }
     this->Position = this->EnemySprite.getPosition();
     this->diff_Position = playerPosi - this->Position - sf::Vector2f(0, 8.f);
